@@ -1,15 +1,18 @@
-import { Cloud, ContactShadows, OrbitControls, Sky, useGLTF } from '@react-three/drei'
-import { Canvas, PrimitiveProps, ThreeElements, useFrame, useThree } from '@react-three/fiber'
-import { useControls } from 'leva'
-import { Suspense, useRef, useState } from 'react'
+import { Environment, OrbitControls, useGLTF } from '@react-three/drei'
+import { Canvas, GroupProps } from '@react-three/fiber'
+import { Suspense, useRef } from 'react'
 import { css } from 'styled-system/css'
-import { type Mesh } from 'three'
 
-function Rig() {
-  const camera = useThree((state) => state.camera)
-  return useFrame((state) => {
-    camera.position.z = Math.sin(state.clock.elapsedTime) * 20
-  })
+function Model(props: GroupProps) {
+  const groupRef = useRef(null!)
+  const beech = useGLTF('/beech-tree.glb')
+  const elm = useGLTF('/elm-tree.glb')
+  return (
+    <group ref={groupRef} {...props} dispose={null}>
+      <primitive object={beech.scene} position={[-1.2, 0, 0]} />
+      <primitive object={elm.scene} position={[20, 0, 0]} />
+    </group>
+  )
 }
 
 export default function App() {
@@ -21,19 +24,12 @@ export default function App() {
 
   return (
     <div className={styles}>
-      <Canvas camera={{ position: [0, 0, 16], fov: 75 }}>
-        <ambientLight intensity={0.8} />
-        <pointLight intensity={2} position={[0, 0, -1000]} />
+      <Canvas camera={{ position: [0, 0, 7.5] }}>
         <Suspense fallback={null}>
-          <Cloud position={[-4, -2, -25]} speed={0.2} opacity={1} />
-          <Cloud position={[4, 2, -15]} speed={0.2} opacity={0.5} />
-          <Cloud position={[-4, 2, -10]} speed={0.2} opacity={1} />
-          <Cloud position={[4, -2, -5]} speed={0.2} opacity={0.5} />
-          <Cloud position={[4, 2, 0]} speed={0.2} opacity={0.75} />
+          <Model />
+          <Environment preset="sunset" />
         </Suspense>
-        <Sky azimuth={0.1} turbidity={10} rayleigh={0.5} inclination={0.6} distance={1000} />
-        <Rig />
-        {/* <OrbitControls /> */}
+        <OrbitControls />
       </Canvas>
     </div>
   )
