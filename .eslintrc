@@ -48,7 +48,7 @@
     "react/jsx-closing-tag-location": "warn",
     "react/no-children-prop": "warn",
     "react/prop-types": "warn",
-
+    "react/no-unescaped-entities": "warn",
     "react/no-unknown-property": "warn",
     "semi": ["error", "never", { "beforeStatementContinuationChars": "never" }],
     "space-before-blocks": [1, "always"]

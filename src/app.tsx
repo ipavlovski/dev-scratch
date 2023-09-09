@@ -1,36 +1,57 @@
-import { Environment, OrbitControls, useGLTF } from '@react-three/drei'
-import { Canvas, GroupProps } from '@react-three/fiber'
-import { Suspense, useRef } from 'react'
+import {
+  CameraShake,
+  ContactShadows,
+  Environment,
+  OrbitControls,
+  Stage,
+  useAnimations,
+  useGLTF
+} from '@react-three/drei'
+import { Canvas, PrimitiveProps, ThreeElements } from '@react-three/fiber'
+import { Suspense, forwardRef, useEffect, useRef } from 'react'
 import { css } from 'styled-system/css'
+import * as THREE from 'three'
+import Model from './model'
+import Overlay from './overlay'
 
-function Model(props: GroupProps) {
-  const groupRef = useRef(null!)
-  const beech = useGLTF('/beech-tree.glb')
-  const elm = useGLTF('/elm-tree.glb')
-  return (
-    <group ref={groupRef} {...props} dispose={null}>
-      <primitive object={beech.scene} position={[-1.2, 0, 0]} />
-      <primitive object={elm.scene} position={[20, 0, 0]} />
-    </group>
-  )
-}
+// function Model() {
+//   const { scene, animations } = useGLTF('/robot-draco.glb')
+//   return <primitive object={scene} />
+// }
+
+import './styles.css'
 
 export default function App() {
   const styles = css({
     width: '100vw',
     height: '100vh',
-    background: '#f0f0f0'
+    background: '#101010'
   })
+
+  const overlay = useRef()
+  const caption = useRef()
+  const scroll = useRef(0)
 
   return (
     <div className={styles}>
-      <Canvas camera={{ position: [0, 0, 7.5] }}>
+      {/* @ts-ignore */}
+      <Canvas
+        legacy={false}
+        shadows
+        // @ts-ignore
+        eventSource={document.getElementById('root')}
+        eventPrefix="client"
+        gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}>
+        {/* <ambientLight intensity={10} /> */}
+        <directionalLight position={[10, 10, 5]} intensity={5} />
+        <directionalLight position={[-10, -10, -5]} intensity={1} />
         <Suspense fallback={null}>
-          <Model />
-          <Environment preset="sunset" />
+          <Model scroll={scroll} />
+          <Environment preset="city" />
         </Suspense>
-        <OrbitControls />
       </Canvas>
+      {/* @ts-ignore */}
+      <Overlay ref={overlay} caption={caption} scroll={scroll} />
     </div>
   )
 }
