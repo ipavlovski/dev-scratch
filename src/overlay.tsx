@@ -1,4 +1,4 @@
-import React, { ReactNode, forwardRef } from 'react'
+import { ForwardedRef, MutableRefObject, forwardRef } from 'react'
 import { css } from 'styled-system/css'
 
 const Overlay = forwardRef(
@@ -7,10 +7,10 @@ const Overlay = forwardRef(
       caption,
       scroll
     }: {
-      caption: React.MutableRefObject<HTMLSpanElement>
-      scroll: React.MutableRefObject<number>
+      caption: MutableRefObject<HTMLSpanElement>
+      scroll: MutableRefObject<number>
     },
-    ref: React.ForwardedRef<HTMLDivElement>
+    ref: ForwardedRef<HTMLDivElement>
   ) => {
     const dotStyles = css({
       pointerEvents: 'none',
@@ -63,8 +63,8 @@ const Overlay = forwardRef(
       <div
         ref={ref}
         onScroll={(e) => {
-          // @ts-ignore
-          scroll.current = e.target.scrollTop / (e.target.scrollHeight - window.innerHeight)
+          const target = e.target as HTMLElement
+          scroll.current = target.scrollTop / (target.scrollHeight - window.innerHeight)
           caption.current.innerText = scroll.current.toFixed(2)
         }}
         className={scrollStyles}>

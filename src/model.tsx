@@ -51,21 +51,27 @@ export default function Model({
   scroll,
   ...props
 }: JSX.IntrinsicElements['group'] & { scroll: React.MutableRefObject<number> }) {
-  const group = useRef<THREE.Group>()
+  const group = useRef<THREE.Group>(null)
   const { nodes, materials, animations } = useGLTF('/model-transformed.glb') as GLTFResult
   const { actions } = useAnimations(animations, group)
 
   const [hovered, set] = useState<string | null>()
   const extras = { receiveShadow: true, castShadow: true, 'material-envMapIntensity': 0.2 }
+
+  // useEffecgt -> play/pause on scroll?
   useEffect(() => void (actions['CameraAction.005']!.play().paused = true), [])
+
+  // useEffect -> change color?
   useEffect(() => {
-    if (hovered)
-      // @ts-ignore
-      (group.current?.getObjectByName(hovered) as THREE.Mesh).material.color.set('white')
+    if (hovered) {
+      const mesh = group.current?.getObjectByName(hovered) as THREE.Mesh
+      const material = mesh.material as THREE.MeshBasicMaterial
+      material.color.set('white')
+    }
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
 
-  //
+  // do some stuff with scroll
   useFrame((state) => {
     actions['CameraAction.005']!.time = THREE.MathUtils.lerp(
       actions['CameraAction.005']!.time,
@@ -73,21 +79,20 @@ export default function Model({
       0.05
     )
     group.current?.children[0].children.forEach((child, index) => {
-      // @ts-ignore
-      child.material.color.lerp(
+      const material = (child as THREE.Mesh).material as THREE.MeshBasicMaterial
+      material.color.lerp(
         color.set(hovered === child.name ? 'tomato' : '#202020'),
         hovered ? 0.1 : 0.05
       )
       const et = state.clock.elapsedTime
-      // child.position.y = Math.sin((et + index * 2000) / 2) * 1
-      // child.rotation.x = Math.sin((et + index * 2000) / 3) / 10
-      // child.rotation.y = Math.cos((et + index * 2000) / 2) / 10
-      // child.rotation.z = Math.sin((et + index * 2000) / 3) / 10
+      child.position.y = Math.sin((et + index * 2000) / 2) * 1
+      child.rotation.x = Math.sin((et + index * 2000) / 3) / 10
+      child.rotation.y = Math.cos((et + index * 2000) / 2) / 10
+      child.rotation.z = Math.sin((et + index * 2000) / 3) / 10
     })
   })
 
   return (
-    // @ts-ignore
     <group ref={group} {...props} dispose={null}>
       <group
         onPointerOver={(e) => (e.stopPropagation(), set(e.object.name))}
@@ -143,8 +148,7 @@ export default function Model({
           far={100}
           near={0.1}
           // fov={28}
-          rotation={[-Math.PI / 2, 0, 0]}
-          >
+          rotation={[-Math.PI / 2, 0, 0]}>
           <directionalLight
             castShadow
             position={[10, 20, 15]}
