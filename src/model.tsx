@@ -79,10 +79,10 @@ export default function Model({
         hovered ? 0.1 : 0.05
       )
       const et = state.clock.elapsedTime
-      child.position.y = Math.sin((et + index * 2000) / 2) * 1
-      child.rotation.x = Math.sin((et + index * 2000) / 3) / 10
-      child.rotation.y = Math.cos((et + index * 2000) / 2) / 10
-      child.rotation.z = Math.sin((et + index * 2000) / 3) / 10
+      // child.position.y = Math.sin((et + index * 2000) / 2) * 1
+      // child.rotation.x = Math.sin((et + index * 2000) / 3) / 10
+      // child.rotation.y = Math.cos((et + index * 2000) / 2) / 10
+      // child.rotation.z = Math.sin((et + index * 2000) / 3) / 10
     })
   })
 
@@ -142,8 +142,9 @@ export default function Model({
           makeDefault
           far={100}
           near={0.1}
-          fov={28}
-          rotation={[-Math.PI / 2, 0, 0]}>
+          // fov={28}
+          rotation={[-Math.PI / 2, 0, 0]}
+          >
           <directionalLight
             castShadow
             position={[10, 20, 15]}
