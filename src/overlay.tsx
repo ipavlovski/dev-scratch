@@ -1,4 +1,4 @@
-import { ForwardedRef, MutableRefObject, forwardRef } from 'react'
+import { ForwardedRef, MutableRefObject, UIEventHandler, forwardRef, useCallback } from 'react'
 import { css } from 'styled-system/css'
 
 type TEntryItem = { height: string; header: string; text: string }
@@ -83,30 +83,33 @@ function EntryItem({ height, header, text }: { height: string; header: string; t
   )
 }
 
-const Overlay = forwardRef(
-  (
-    {
-      caption,
-      scroll
-    }: {
-      caption: MutableRefObject<HTMLSpanElement>
-      scroll: MutableRefObject<number>
-    },
-    ref: ForwardedRef<HTMLDivElement>
-  ) => {
-    const captionStyles = css({
-      pointerEvents: 'none',
-      position: 'fixed',
-      top: 0,
-      right: 0,
-      margin: 20,
-      color: 'white',
-      fontWeight: 100,
-      lineHeight: '1em',
-      fontVariantNumeric: 'tabular-nums'
-    })
+const Caption = forwardRef((props, ref: ForwardedRef<HTMLSpanElement>) => {
+  const styles = css({
+    pointerEvents: 'none',
+    position: 'fixed',
+    top: 0,
+    right: 0,
+    margin: 20,
+    color: 'white',
+    fontWeight: 100,
+    lineHeight: '1em',
+    fontVariantNumeric: 'tabular-nums'
+  })
 
-    const scrollStyles = css({
+  return (
+    <span className={styles} ref={ref}>
+      0.00
+    </span>
+  )
+})
+
+type OverlayProps = {
+  caption: MutableRefObject<HTMLSpanElement>
+  scroll: MutableRefObject<number>
+}
+const Overlay = forwardRef(
+  ({ caption, scroll }: OverlayProps, ref: ForwardedRef<HTMLDivElement>) => {
+    const styles = css({
       width: '100%',
       height: '100%',
       position: 'absolute',
@@ -119,21 +122,19 @@ const Overlay = forwardRef(
       }
     })
 
+    const scrollHandler = useCallback<UIEventHandler>((e) => {
+      const target = e.target as HTMLElement
+      scroll.current = target.scrollTop / (target.scrollHeight - window.innerHeight)
+      caption.current.innerText = scroll.current.toFixed(2)
+    }, [])
+
     return (
-      <div
-        ref={ref}
-        onScroll={(e) => {
-          const target = e.target as HTMLElement
-          scroll.current = target.scrollTop / (target.scrollHeight - window.innerHeight)
-          caption.current.innerText = scroll.current.toFixed(2)
-        }}
-        className={scrollStyles}>
+      <div ref={ref} onScroll={scrollHandler} className={styles}>
         {entries.map((entry, ind) => (
           <EntryItem key={ind} {...entry} />
         ))}
-        <span className={captionStyles} ref={caption}>
-          0.00
-        </span>
+
+        <Caption ref={caption} />
       </div>
     )
   }
