@@ -1,6 +1,88 @@
 import { ForwardedRef, MutableRefObject, forwardRef } from 'react'
 import { css } from 'styled-system/css'
 
+type TEntryItem = { height: string; header: string; text: string }
+const entries: TEntryItem[] = [
+  {
+    height: '400vh',
+    header: 'headset',
+    text: `Virtual reality (VR) is a simulated experience that can be similar to or completely
+    different from the real world.`
+  },
+  {
+    height: '200vh',
+    header: 'headphone',
+    text: `Headphones are a pair of small loudspeaker drivers worn on or around the head over a
+    users ears.`
+  },
+  {
+    height: '200vh',
+    header: 'rocket',
+    text: `A rocket (from Italian: rocchetto, lit.'bobbin/spool')[nb 1][1] is a
+    projectile that spacecraft, aircraft or other vehicle use to obtain thrust from a rocket
+    engine.`
+  },
+  {
+    height: '200vh',
+    header: 'turbine',
+    text: `A turbine (/ˈtɜːrbaɪn/ or /ˈtɜːrbɪn/) (from the Greek τύρβη, tyrbē, or
+      Latin turbo, meaning vortex)[1][2] is a rotary mechanical device that extracts energy
+      from a fluid flow and converts it into useful work.`
+  },
+  {
+    height: '200vh',
+    header: 'table',
+    text: `A table is an item of furniture with a flat top and one or more legs, used
+    as a surface for working at, eating from or on which to place things.[1][2]`
+  },
+  {
+    height: '200vh',
+    header: 'laptop',
+    text: `A laptop, laptop computer, or notebook computer is a small, portable
+    personal computer (PC) with a screen and alphanumeric keyboard.`
+  },
+  {
+    height: '200vh',
+    header: 'zeppelin',
+    text: `A Zeppelin is a type of rigid airship named after the German inventor
+    Count Ferdinand von Zeppelin (German pronunciation: [ˈt͡sɛpəliːn]) who pioneered rigid
+    airship development at the beginning of the 20th century.`
+  }
+]
+
+function EntryItem({ height, header, text }: { height: string; header: string; text: string }) {
+  const styles = css({
+    pointerEvents: 'none',
+    position: 'sticky',
+    top: 0,
+    display: 'inline-block',
+    maxWidth: 600,
+    padding: 10,
+    color: '#a0a0a0',
+    lineHeight: '1.6em',
+    fontSize: 15,
+    letterSpacing: 1.5,
+    '& > h1': {
+      pointerEvents: 'none',
+      color: 'white',
+      fontSize: '5em',
+      fontWeight: 100,
+      lineHeight: '1em',
+      margin: 0,
+      marginBottom: '0.25em'
+    }
+  })
+
+  return (
+    <div style={{ height: height }}>
+      <div className={styles}>
+        <h1>{header}</h1>
+        {text}
+      </div>
+    </div>
+  )
+}
+
 const Overlay = forwardRef(
   (
     {
@@ -12,28 +94,6 @@ const Overlay = forwardRef(
     },
     ref: ForwardedRef<HTMLDivElement>
   ) => {
-    const dotStyles = css({
-      pointerEvents: 'none',
-      position: 'sticky',
-      top: 0,
-      display: 'inline-block',
-      maxWidth: 600,
-      padding: 10,
-      color: '#a0a0a0',
-      lineHeight: '1.6em',
-      fontSize: 15,
-      letterSpacing: 1.5,
-      '& > h1': {
-        pointerEvents: 'none',
-        color: 'white',
-        fontSize: '5em',
-        fontWeight: 100,
-        lineHeight: '1em',
-        margin: 0,
-        marginBottom: '0.25em'
-      }
-    })
-
     const captionStyles = css({
       pointerEvents: 'none',
       position: 'fixed',
@@ -68,53 +128,9 @@ const Overlay = forwardRef(
           caption.current.innerText = scroll.current.toFixed(2)
         }}
         className={scrollStyles}>
-        <div style={{ height: '400vh' }}>
-          <div className={dotStyles}>
-            <h1>headset</h1>
-            Virtual reality (VR) is a simulated experience that can be similar to or completely
-            different from the real world.
-          </div>
-        </div>
-        <div style={{ height: '200vh' }}>
-          <div className={dotStyles}>
-            <h1>headphone</h1>
-            Headphones are a pair of small loudspeaker drivers worn on or around the head over a
-            users ears.
-          </div>
-        </div>
-        <div style={{ height: '200vh' }}>
-          <div className={dotStyles}>
-            <h1>rocket</h1>A rocket (from Italian: rocchetto, lit.'bobbin/spool')[nb 1][1] is a
-            projectile that spacecraft, aircraft or other vehicle use to obtain thrust from a rocket
-            engine.
-          </div>
-        </div>
-        <div style={{ height: '200vh' }}>
-          <div className={dotStyles}>
-            <h1>turbine</h1>A turbine (/ˈtɜːrbaɪn/ or /ˈtɜːrbɪn/) (from the Greek τύρβη, tyrbē, or
-            Latin turbo, meaning vortex)[1][2] is a rotary mechanical device that extracts energy
-            from a fluid flow and converts it into useful work.
-          </div>
-        </div>
-        <div style={{ height: '200vh' }}>
-          <div className={dotStyles}>
-            <h1>table</h1>A table is an item of furniture with a flat top and one or more legs, used
-            as a surface for working at, eating from or on which to place things.[1][2]
-          </div>
-        </div>
-        <div style={{ height: '200vh' }}>
-          <div className={dotStyles}>
-            <h1>laptop</h1>A laptop, laptop computer, or notebook computer is a small, portable
-            personal computer (PC) with a screen and alphanumeric keyboard.
-          </div>
-        </div>
-        <div style={{ height: '200vh' }}>
-          <div className={dotStyles}>
-            <h1>zeppelin</h1>A Zeppelin is a type of rigid airship named after the German inventor
-            Count Ferdinand von Zeppelin (German pronunciation: [ˈt͡sɛpəliːn]) who pioneered rigid
-            airship development at the beginning of the 20th century.
-          </div>
-        </div>
+        {entries.map((entry, ind) => (
+          <EntryItem key={ind} {...entry} />
+        ))}
         <span className={captionStyles} ref={caption}>
           0.00
         </span>
