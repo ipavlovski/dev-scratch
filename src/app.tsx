@@ -1,6 +1,6 @@
-import { PiClockBold, PiTag } from 'react-icons/pi'
+import { PiClockBold, PiQuotesFill, PiTag } from 'react-icons/pi'
 import { css } from 'styled-system/css'
-import { Flex } from 'styled-system/jsx'
+import { Flex, styled } from 'styled-system/jsx'
 
 type HeaderProps = { image: string; tags: string[]; title: string; subtitle: string; date: string }
 function Header(props: HeaderProps) {
@@ -107,7 +107,68 @@ function Summary(props: SummaryProps) {
   )
 }
 
+type Content =
+  | { type: 'bq'; text: string }
+  | { type: 'title'; text: string }
+  | { type: 'p'; text: string[] }
+  | { type: 'gallery'; text: string[] }
 
+function Blockquote({ text }: { text: string }) {
+  const styles = css({
+    position: 'relative',
+    margin: '40px 0',
+    padding: '40px',
+    backgroundColor: '#f8f8f8',
+    borderRadius: '16px',
+    '& i': {
+      position: 'absolute',
+      color: '#777',
+      opacity: 0.5,
+      _first: { top: '-4px', left: '-4px', transform: 'scale(3)' },
+      _last: { bottom: '-4px', right: '-4px', transform: 'scale(3) rotate(180deg)' }
+    }
+  })
+
+  return (
+    <blockquote className={styles}>
+      <i>
+        <PiQuotesFill />
+      </i>
+      {text}
+      <i>
+        <PiQuotesFill />
+      </i>
+    </blockquote>
+  )
+}
+
+function Paragraph({ text }: { text: string[] }) {
+  const styles = css({
+    marginBottom: '20px',
+    color: '#777',
+    fontSize: '1.125em',
+    lineHeight: 1.75
+  })
+  return text.map((p, ind) => (
+    <p key={ind} className={styles}>
+      {p}
+    </p>
+  ))
+}
+
+function Gallery({ urls }: { urls: string[] }) {
+  return <div>Gallery goes here...</div>
+}
+
+function Title({ text }: { text: string }) {
+  const styles = css({
+    marginTop: '60px',
+    marginBottom: '20px',
+    fontSize: '1.25em'
+  })
+
+  return <h1 className={styles}>{text}</h1>
+}
 
 export default function App() {
   const styles = css({
@@ -131,10 +192,47 @@ export default function App() {
     views: 1288
   } satisfies SummaryProps
 
+  const contents: Content[] = [
+    {
+      type: 'title',
+      text: 'You Gotta Love Birds'
+    },
+    {
+      type: 'p',
+      text: [
+        `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus imperdiet ut quam sit amet vehicula. Donec sit amet facilisis quam. Integer mollis, urna accumsan tempor hendrerit, risus neque tincidunt neque, in aliquam elit eros quis tortor. Sed id venenatis massa, ut malesuada sem. Nam lacinia sodales tellus nec efficitur. Vestibulum fringilla nisl ac iaculis ultricies. Sed commodo imperdiet metus vitae molestie. In laoreet rutrum pretium. Aenean a enim ac lacus tincidunt pellentesque ac a tellus.`,
+        `Donec imperdiet efficitur risus in venenatis. Aenean ornare iaculis orci a condimentum. Praesent tincidunt, purus ac placerat posuere, lacus risus suscipit lacus, et sollicitudin turpis metus in enim. Vestibulum at imperdiet magna, ac vehicula magna. Praesent placerat sapien bibendum, faucibus lectus at, euismod elit. Nunc velit est, faucibus et faucibus eu, tempus non nisi. Fusce hendrerit auctor lectus non auctor. Vestibulum luctus metus eget sapien volutpat congue. Fusce eget augue mauris. Ut egestas mi et feugiat sagittis. Cras ac convallis elit.`,
+        `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus imperdiet ut quam sit amet vehicula. Donec sit amet facilisis quam. Integer mollis, urna accumsan tempor hendrerit, risus neque tincidunt neque, in aliquam elit eros quis tortor. Sed id venenatis massa, ut malesuada sem. Nam lacinia sodales tellus nec efficitur. Vestibulum fringilla nisl ac iaculis ultricies. Sed commodo imperdiet metus vitae molestie. In laoreet rutrum pretium. Aenean a enim ac lacus tincidunt pellentesque ac a tellus.`
+      ]
+    },
+    {
+      type: 'bq',
+      text: `"Be like the bird who, pausing in her flight awhile on boughs too slight, feels them give way beneath her, and yet sings, knowing she hath wings." — Victor Hugo`
+    },
+    {
+      type: 'gallery',
+      text: ['sdf', 'asdf']
+    }
+  ]
+
   return (
     <div className={styles}>
       <Header {...headerArgs} />
       <Summary {...summaryArgs} />
+      {contents.map(({ type, text }, ind) => {
+        switch (type) {
+          case 'bq':
+            return <Blockquote key={ind} text={text} />
+          case 'gallery':
+            return <Gallery key={ind} urls={text} />
+          case 'p':
+            return <Paragraph key={ind} text={text} />
+          case 'title':
+            return <Title key={ind} text={text} />
+          default:
+            return <></>
+        }
+      })}
     </div>
   )
 }
