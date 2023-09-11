@@ -12,8 +12,17 @@ export default defineConfig({
 
   // Useful for theme customization
   theme: {
-    extend: {}
+    extend: {
+      tokens: {
+        fonts: {
+          jakarta: { value: 'Plus Jakarta Sans, sans-serif' },
+          pacifico: { value: 'Pacifico, cursive;' }
+        }
+      }
+    }
   },
+
+  jsxFramework: 'react',
 
   // The output directory for your css system
   outdir: 'styled-system'

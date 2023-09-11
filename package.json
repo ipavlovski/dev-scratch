@@ -4,22 +4,16 @@
 		"prepare": "panda codegen"
 	},
 	"dependencies": {
-		"@react-three/drei": "^9.83.3",
-		"@react-three/fiber": "^8.14.1",
 		"dotenv": "^16.3.1",
-		"leva": "^0.9.35",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-icons": "^4.11.0",
-		"three": "^0.156.1",
-		"three-stdlib": "^2.25.1"
+		"react-icons": "^4.11.0"
 	},
 	"devDependencies": {
 		"@pandacss/dev": "^0.13.0",
 		"@types/node": "^20.5.7",
 		"@types/react": "^18.2.21",
 		"@types/react-dom": "^18.2.7",
-		"@types/three": "^0.155.1",
 		"@typescript-eslint/eslint-plugin": "^6.4.1",
 		"@typescript-eslint/parser": "^6.4.1",
 		"@vitejs/plugin-react": "^4.0.4",
