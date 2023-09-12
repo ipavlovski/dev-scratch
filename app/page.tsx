@@ -1,5 +1,6 @@
-import { Center } from 'styled-system/jsx'
+import Link from 'next/link'
 import { css } from 'styled-system/css'
+import { Stack } from 'styled-system/jsx'
 
 export default function Home() {
   const styles = css({
@@ -11,10 +12,21 @@ export default function Home() {
     }
   })
 
-  // return
   return (
-    <Center height="100vh" background="slate.500" color="slate.100">
+    <Stack height="100vh" background="slate.500" color="slate.100">
       <div className={styles}>Hello panda 🐼!</div>
-    </Center>
+      <h1>Some links</h1>
+      <ul>
+        <li>
+          <Link href="/blog/123">BLOG 123</Link>
+        </li>
+        <li>
+          <Link href="/about">ABOUT</Link>
+        </li>
+        <li>
+          <Link href="/fetching">FETCHING</Link>
+        </li>
+      </ul>
+    </Stack>
   )
 }
