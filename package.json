@@ -6,7 +6,7 @@
     "pnpm": ">=8"
   },
 	"scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
 		"prepare": "panda codegen"
