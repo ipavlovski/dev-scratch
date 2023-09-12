@@ -1,6 +1,24 @@
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { PiClockBold, PiQuotesFill, PiTag } from 'react-icons/pi'
-import { css } from 'styled-system/css'
-import { Flex, styled } from 'styled-system/jsx'
+import { css, cx } from 'styled-system/css'
+import { Flex } from 'styled-system/jsx'
+
+interface UseBooleanOutput {
+  value: boolean
+  setValue: Dispatch<SetStateAction<boolean>>
+  setTrue: () => void
+  setFalse: () => void
+  toggle: () => void
+}
+export function useBoolean(defaultValue?: boolean): UseBooleanOutput {
+  const [value, setValue] = useState(!!defaultValue)
+
+  const setTrue = useCallback(() => setValue(true), [])
+  const setFalse = useCallback(() => setValue(false), [])
+  const toggle = useCallback(() => setValue((x) => !x), [])
+
+  return { value, setValue, setTrue, setFalse, toggle }
+}
 
 type HeaderProps = { image: string; tags: string[]; title: string; subtitle: string; date: string }
 function Header(props: HeaderProps) {
@@ -147,7 +165,7 @@ function Paragraph({ text }: { text: string[] }) {
     marginBottom: '20px',
     color: '#777',
     fontSize: '1.125em',
-    lineHeight: 1.75
+    lineHeight: '1.75em'
   })
   return text.map((p, ind) => (
     <p key={ind} className={styles}>
@@ -156,8 +174,84 @@ function Paragraph({ text }: { text: string[] }) {
   ))
 }
 
-function Gallery({ urls }: { urls: string[] }) {
-  return <div>Gallery goes here...</div>
+type DispatchURL = Dispatch<SetStateAction<string | null>>
+function GalleryItem({ url, setMaskUrl }: { url: string; setMaskUrl: DispatchURL }) {
+  const styles = css({
+    minHeight: '200px',
+    minWidth: '200px',
+    backgroundColor: '#eee',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    borderRadius: '.5rem',
+    _hover: {
+      opacity: 0.9,
+      cursor: 'pointer'
+    }
+  })
+  return (
+    <div
+      className={styles}
+      style={{ backgroundImage: `url("${url}")` }}
+      onClick={() => setMaskUrl(url)}
+    />
+  )
+}
+
+function Gallery({ urls, setMaskUrl }: { urls: string[]; setMaskUrl: DispatchURL }) {
+  const styles = css({
+    display: 'grid',
+    gridTemplateRows: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+    gridGap: '10px 10px'
+  })
+  return (
+    <div className={styles}>
+      {urls.map((url, ind) => (
+        <GalleryItem url={url} key={ind} setMaskUrl={setMaskUrl} />
+      ))}
+    </div>
+  )
+}
+
+function GalleryMask({ url, setMaskUrl }: { url: string; setMaskUrl: DispatchURL }) {
+  const styles = css({
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    zIndex: 1,
+    width: '100vw',
+    height: '100vh',
+    padding: 40,
+    backgroundColor: '#22222288',
+    animation: 'fadein ease-in',
+    animationFillMode: 'forwards',
+    animationDuration: '250ms',
+    '& img': {
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain'
+    }
+  })
+
+  const transition = css({
+    animation: 'fadeout ease-in',
+    animationFillMode: 'forwards',
+    animationDuration: '250ms'
+  })
+
+  const [isFading, setFading] = useState(false)
+
+  return (
+    <div
+      className={cx(styles, isFading && transition)}
+      onClick={() => {
+        setFading(true)
+        setTimeout(() => setMaskUrl(null), 300)
+      }}>
+      <img width="200" src={url} />
+    </div>
+  )
 }
 
 function Title({ text }: { text: string }) {
@@ -175,6 +269,9 @@ export default function App() {
     margin: '4rem 6rem',
     fontFamily: 'jakarta'
   })
+
+  // const { value: isMaskShowing, setTrue: showMask, setFalse: hideMask } = useBoolean(false)
+  const [maskUrl, setMaskUrl] = useState<string | null>(null)
 
   const headerArgs = {
     image:
@@ -211,12 +308,19 @@ export default function App() {
     },
     {
       type: 'gallery',
-      text: ['sdf', 'asdf']
+      text: [
+        'https://images.unsplash.com/photo-1551668231-6a07c2b7d544?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1777&q=80',
+        'https://images.unsplash.com/photo-1605092675701-0dafa674328e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=465&q=80',
+        'https://images.unsplash.com/photo-1604946591005-c481923435b7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1780&q=80',
+        'https://images.unsplash.com/photo-1603741583823-e588bae552b2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1964&q=80',
+        'https://images.unsplash.com/photo-1618611157876-3517925c6285?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'
+      ]
     }
   ]
 
   return (
     <div className={styles}>
+      {maskUrl && <GalleryMask url={maskUrl} setMaskUrl={setMaskUrl} />}
       <Header {...headerArgs} />
       <Summary {...summaryArgs} />
       {contents.map(({ type, text }, ind) => {
@@ -224,7 +328,7 @@ export default function App() {
           case 'bq':
             return <Blockquote key={ind} text={text} />
           case 'gallery':
-            return <Gallery key={ind} urls={text} />
+            return <Gallery key={ind} urls={text} setMaskUrl={setMaskUrl} />
           case 'p':
             return <Paragraph key={ind} text={text} />
           case 'title':
