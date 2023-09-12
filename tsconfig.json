@@ -1,22 +1,29 @@
 {
   "compilerOptions": {
-      "module": "ESNext",
-      "target": "ESNext",
-      "outDir": "dist",
-      "sourceMap": true,
-      "esModuleInterop": true,
-      "types": ["node", "vite/client"],
-      "moduleResolution": "Node",
-      "lib": ["DOM", "DOM.Iterable", "ESNext"],
-      "useDefineForClassFields": true,
-      "allowJs": false,
-      "skipLibCheck": false,
-      "allowSyntheticDefaultImports": true,
-      "strict": true,
-      "forceConsistentCasingInFileNames": true,
-      "resolveJsonModule": true,
-      "noEmit": true,
-      "jsx": "react-jsx",
-      "baseUrl": ".",
+    "module": "ESNext",
+    "target": "es5", //"ESNext"
+    // "outDir": "dist",
+    // "sourceMap": true,
+    "esModuleInterop": true,
+    "types": ["node"],
+    "moduleResolution": "Node",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "useDefineForClassFields": true,
+    "allowJs": true, // false
+    "skipLibCheck": true, // false
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "jsx": "preserve", // "react-jsx"
+    "baseUrl": ".",
+    // nextjs specific stuff
+    "isolatedModules": true,
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
+    "plugins": [{ "name": "next" }]
   },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }
