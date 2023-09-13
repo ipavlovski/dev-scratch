@@ -82,6 +82,13 @@ function Footer() {
     alignItems: 'center'
   })
 
+  const iconStyles = css({
+    _hover: {
+      transition: 'color 250ms ease',
+      color: 'red.700'
+    }
+  })
+
   return (
     <div className={footerStyles}>
       <div className={upperFooterStyles}>
@@ -96,7 +103,7 @@ function Footer() {
       </div>
       <div className={lowerFooterStyles}>
         <p>© 2023 OceanSplash. All rights reserved | Designed and developed in Nova Scotia</p>
-        <FaCanadianMapleLeaf size={'.875rem'} />
+        <FaCanadianMapleLeaf className={iconStyles} size={'.875rem'} />
       </div>
     </div>
   )
