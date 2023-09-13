@@ -3,7 +3,7 @@ import type { Product } from 'lib/shopify/types'
 import Image from 'next/image'
 import Link from 'next/link'
 import { css } from 'styled-system/css'
-import { Center, Stack } from 'styled-system/jsx'
+import { Center, Grid, GridItem, Stack } from 'styled-system/jsx'
 
 type PriceProps = {
   amount: string
@@ -73,12 +73,16 @@ function GridTileImage({ isInteractive = true, active, label, ...props }: GridTi
 
 type ThreeItemGridItemProps = { item: Product; size: 'full' | 'half'; priority?: boolean }
 function ThreeItemGridItem({ item, size, priority }: ThreeItemGridItemProps) {
+  const styles = css({
+    position: 'relative'
+  })
   return (
-    <div>
+    <div className={styles}>
       <Link href={`/product/${item.handle}`}>
         <GridTileImage
           src={item.featuredImage.url}
           fill
+          // sizes={'10vw'}
           sizes={
             size === 'full' ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 100vw'
           }
@@ -96,6 +100,10 @@ function ThreeItemGridItem({ item, size, priority }: ThreeItemGridItemProps) {
   )
 }
 
+function MockItem({ url }: { url: string }) {
+  return <div style={{ backgroundImage: `url("${url}")` }}></div>
+}
+
 async function ThreeItemGrid() {
   // `hidden-*` collections are hidden from the search page
   const homepageItems = await getCollectionProducts({
@@ -104,11 +112,45 @@ async function ThreeItemGrid() {
   if (!homepageItems[0] || !homepageItems[1] || !homepageItems[2]) return null
   const [firstProduct, secondProduct, thirdProduct] = homepageItems
 
+  const styles = css({
+    display: 'grid',
+    gridTemplateRows: '1fr 1fr',
+    gridTemplateColumns: '1fr 1fr 1fr',
+    gridGap: '1rem',
+    margin: '1rem',
+    height: 'calc(100vh - 4rem)',
+    width: '100vw',
+    '& div:nth-child(1)': {
+      gridArea: '1 / 1 / 3 / 3',
+      width: '100%',
+      height: '100%'
+    },
+    '& div:nth-child(2)': {
+      gridArea: '1 / 3 / 2 / 4',
+      width: '100%',
+      height: '100%'
+    },
+    '& div:nth-child(3)': {
+      gridArea: '2 / 3 / 3 / 4',
+      width: '100%',
+      height: '100%'
+    }
+  })
+
   return (
-    <section className="mx-auto grid max-w-screen-2xl gap-4 px-4 pb-4 md:grid-cols-6 md:grid-rows-2">
-      <ThreeItemGridItem size="full" item={firstProduct} priority={true} />
-      <ThreeItemGridItem size="half" item={secondProduct} priority={true} />
-      <ThreeItemGridItem size="half" item={thirdProduct} />
+    <section className={styles}>
+      <div>
+        {/* <MockItem url="https://placehold.co/400?text=i1&font=montserrat" /> */}
+        <ThreeItemGridItem size="full" item={firstProduct} priority={true} />
+      </div>
+      <div>
+        {/* <MockItem url="https://placehold.co/400?text=i2&font=montserrat" /> */}
+        <ThreeItemGridItem size="half" item={secondProduct} priority={true} />
+      </div>
+      <div>
+        {/* <MockItem url="https://placehold.co/400?text=i3&font=montserrat" /> */}
+        <ThreeItemGridItem size="half" item={thirdProduct} />
+      </div>
     </section>
   )
 }
@@ -152,9 +194,9 @@ export default function Home() {
   })
 
   return (
-    <Center height="calc(100vh - 4rem)">
+    <Center>
       <ThreeItemGrid />
-      <Carousel />
+      {/* <Carousel /> */}
     </Center>
   )
 }
