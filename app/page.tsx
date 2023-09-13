@@ -2,106 +2,90 @@ import { getCollectionProducts } from 'lib/shopify/api'
 import type { Product } from 'lib/shopify/types'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ComponentProps } from 'react'
 import { css } from 'styled-system/css'
-import { Center, Grid, GridItem, Stack } from 'styled-system/jsx'
+import { Center, Grid, GridItem, HStack, Stack } from 'styled-system/jsx'
 
-type PriceProps = {
-  amount: string
-  className?: string
-  currencyCode: string
-  currencyCodeClassName?: string
-} & React.ComponentProps<'p'>
-function Price({ amount, className, currencyCode = 'USD', currencyCodeClassName }: PriceProps) {
-  return (
-    <p suppressHydrationWarning={true} className={className}>
-      {`${new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency: currencyCode,
-        currencyDisplay: 'narrowSymbol'
-      }).format(parseFloat(amount))}`}
-      <span>{`${currencyCode}`}</span>
-    </p>
-  )
-}
-
-type LabelProps = {
-  title: string
-  amount: string
-  currencyCode: string
-  position?: 'bottom' | 'center'
-}
-function Label({ title, amount, currencyCode, position = 'bottom' }: LabelProps) {
-  return (
-    <div>
-      <div>
-        <h3>{title}</h3>
-        <Price
-          amount={amount}
-          currencyCode={currencyCode}
-          currencyCodeClassName="hidden @[275px]/label:inline"
-        />
-      </div>
-    </div>
-  )
-}
-
-type GridTileImageProps = {
-  isInteractive?: boolean
-  active?: boolean
-  label?: LabelProps
-} & React.ComponentProps<typeof Image>
-
-function GridTileImage({ isInteractive = true, active, label, ...props }: GridTileImageProps) {
-  return (
-    <div>
-      {props.src ? (
-        // `alt` is inherited from `props`, which is being enforced with TypeScript:
-        // eslint-disable-next-line jsx-a11y/alt-text
-        <Image {...props} />
-      ) : null}
-      {label ? (
-        <Label
-          title={label.title}
-          amount={label.amount}
-          currencyCode={label.currencyCode}
-          position={label.position}
-        />
-      ) : null}
-    </div>
-  )
-}
-
-type ThreeItemGridItemProps = { item: Product; size: 'full' | 'half'; priority?: boolean }
-function ThreeItemGridItem({ item, size, priority }: ThreeItemGridItemProps) {
+function GridTileImage({ src, alt }: ComponentProps<typeof Image>) {
   const styles = css({
-    position: 'relative'
+    transition: '250ms all ease-in-out',
+    _hover: {
+      transform: 'scale(1.05)'
+    }
   })
+  return <Image className={styles} src={src} alt={alt} fill sizes="(min-width: 768px) 33vw, 50vw" />
+}
+
+type GridTileLabelProps = { title: string; amount: string; currencyCode: string }
+function GridTileLabel({ title, amount, currencyCode }: GridTileLabelProps) {
+  const labelStyles = css({
+    position: 'absolute',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    bottom: 0,
+    left: 0,
+    margin: '1rem',
+    background: 'slate.800',
+    padding: '.25rem .25rem .25rem .75rem',
+    fontSize: '.75rem',
+    fontWeight: 'bold',
+    borderRadius: '2rem',
+    boxShadow: '13px -11px 33px -6px rgba(0,0,0,0.51);',
+    maxWidth: '30vw'
+  })
+
+  const titleStyles = css({
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    maxWidth: '10rem',
+    flex: 1,
+    marginRight: '1rem'
+  })
+
+  const priceStyles = css({
+    padding: '.5rem',
+    borderRadius: '2rem',
+    backgroundColor: 'blue.800'
+  })
+
+  return (
+    <div className={labelStyles}>
+      <h2 className={titleStyles}>{title}</h2>
+      <h2 className={priceStyles}>
+        {amount} {currencyCode}
+      </h2>
+    </div>
+  )
+}
+
+function ThreeItemGridItem({ item }: { item: Product }) {
+  const styles = css({
+    position: 'relative',
+    background: 'slate.900',
+    padding: '2rem',
+    borderRadius: '1rem',
+    border: '1px solid',
+    borderColor: 'stone.900',
+    overflow: 'hidden',
+    _hover: {
+      borderColor: 'stone.300'
+    }
+  })
+
   return (
     <div className={styles}>
       <Link href={`/product/${item.handle}`}>
-        <GridTileImage
-          src={item.featuredImage.url}
-          fill
-          // sizes={'10vw'}
-          sizes={
-            size === 'full' ? '(min-width: 768px) 66vw, 100vw' : '(min-width: 768px) 33vw, 100vw'
-          }
-          priority={priority}
-          alt={item.title}
-          label={{
-            position: size === 'full' ? 'center' : 'bottom',
-            title: item.title as string,
-            amount: item.priceRange.maxVariantPrice.amount,
-            currencyCode: item.priceRange.maxVariantPrice.currencyCode
-          }}
+        <GridTileImage src={item.featuredImage.url} alt={item.title} />
+        <GridTileLabel
+          title={item.title}
+          amount={item.priceRange.maxVariantPrice.amount}
+          currencyCode={item.priceRange.maxVariantPrice.currencyCode}
         />
       </Link>
     </div>
   )
-}
-
-function MockItem({ url }: { url: string }) {
-  return <div style={{ backgroundImage: `url("${url}")` }}></div>
 }
 
 async function ThreeItemGrid() {
@@ -114,77 +98,30 @@ async function ThreeItemGrid() {
 
   const styles = css({
     display: 'grid',
-    gridTemplateRows: '1fr 1fr',
-    gridTemplateColumns: '1fr 1fr 1fr',
+    gridTemplateRows: 'repeat(2, 30vw)',
+    gridTemplateColumns: 'repeat(2, 30vw)',
     gridGap: '1rem',
-    margin: '1rem',
+    padding: '1rem',
     height: 'calc(100vh - 4rem)',
     width: '100vw',
-    '& div:nth-child(1)': {
-      gridArea: '1 / 1 / 3 / 3',
-      width: '100%',
-      height: '100%'
+
+    '& > div:nth-child(1)': {
+      gridArea: '1 / 1 / 3 / 3'
     },
-    '& div:nth-child(2)': {
-      gridArea: '1 / 3 / 2 / 4',
-      width: '100%',
-      height: '100%'
+    '& > div:nth-child(2)': {
+      gridArea: '1 / 3 / 2 / 4'
     },
-    '& div:nth-child(3)': {
-      gridArea: '2 / 3 / 3 / 4',
-      width: '100%',
-      height: '100%'
+    '& > div:nth-child(3)': {
+      gridArea: '2 / 3 / 3 / 4'
     }
   })
 
   return (
     <section className={styles}>
-      <div>
-        {/* <MockItem url="https://placehold.co/400?text=i1&font=montserrat" /> */}
-        <ThreeItemGridItem size="full" item={firstProduct} priority={true} />
-      </div>
-      <div>
-        {/* <MockItem url="https://placehold.co/400?text=i2&font=montserrat" /> */}
-        <ThreeItemGridItem size="half" item={secondProduct} priority={true} />
-      </div>
-      <div>
-        {/* <MockItem url="https://placehold.co/400?text=i3&font=montserrat" /> */}
-        <ThreeItemGridItem size="half" item={thirdProduct} />
-      </div>
+      <ThreeItemGridItem item={firstProduct} />
+      <ThreeItemGridItem item={secondProduct} />
+      <ThreeItemGridItem item={thirdProduct} />
     </section>
-  )
-}
-
-async function Carousel() {
-  // `hidden-*` collections are hidden from the search page
-  const products = await getCollectionProducts({ collection: 'hidden-homepage-carousel' })
-  if (!products?.length) return null
-
-  // purseful duplication - fill-in even the widest of screens for looping
-  const carouselProducts = [...products, ...products, ...products]
-
-  return (
-    <div>
-      <ul>
-        {carouselProducts.map((product, i) => (
-          <li key={`${product.handle}${i}`}>
-            <Link href={`/product/${product.handle}`}>
-              <GridTileImage
-                alt={product.title}
-                label={{
-                  title: product.title,
-                  amount: product.priceRange.maxVariantPrice.amount,
-                  currencyCode: product.priceRange.maxVariantPrice.currencyCode
-                }}
-                src={product.featuredImage?.url}
-                fill
-                sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-              />
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
   )
 }
 
