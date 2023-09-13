@@ -1,3 +1,9 @@
+export interface ShopifyErrorLike {
+  status: number
+  message: Error
+  cause?: Error
+}
+
 export type Maybe<T> = T | null
 
 export type Connection<T> = {
