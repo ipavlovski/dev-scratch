@@ -13,9 +13,26 @@ export default defineConfig({
   // Useful for theme customization
   theme: {
     extend: {
-      tokens: {}
+      keyframes: {
+        marquee: {
+          '0%': {
+            transform: 'translateX(0%)'
+          },
+          '100%': {
+            transform: 'translateX(-100%)'
+          }
+        }
+      },
+      tokens: {
+        animations: {
+          // marquee: {
+          //   value: 'marquee 60s linear infinite'
+          // }
+        }
+      }
     }
   },
+  hash: { cssVar: false, className: true },
 
   // enable codegen components
   jsxFramework: 'react',

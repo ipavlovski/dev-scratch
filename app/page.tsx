@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { css } from 'styled-system/css'
-import { Center, Grid, GridItem, HStack, Stack } from 'styled-system/jsx'
+import { Center, VStack } from 'styled-system/jsx'
 
 function GridTileImage({ src, alt }: ComponentProps<typeof Image>) {
   const styles = css({
@@ -102,7 +102,6 @@ async function ThreeItemGrid() {
     gridTemplateColumns: 'repeat(2, 30vw)',
     gridGap: '1rem',
     padding: '1rem',
-    height: 'calc(100vh - 4rem)',
     width: '100vw',
 
     '& > div:nth-child(1)': {
@@ -125,15 +124,68 @@ async function ThreeItemGrid() {
   )
 }
 
-export default function Home() {
+function CarouselItem({ item }: { item: Product }) {
   const styles = css({
-    fontSize: '3xl'
+    pos: 'relative',
+    aspectRatio: 'square',
+    w: '1/3',
+    flex: 'none',
+    background: 'slate.900',
+    borderRadius: '1rem',
+    '& > a': {
+      w: '100%',
+      h: '100%',
+    }
   })
 
   return (
-    <Center>
+    <li className={styles}>
+      <Link href={`/product/${item.handle}`} >
+        <GridTileImage src={item.featuredImage.url} alt={item.title} />
+        <GridTileLabel
+          title={item.title}
+          amount={item.priceRange.maxVariantPrice.amount}
+          currencyCode={item.priceRange.maxVariantPrice.currencyCode}
+        />
+      </Link>
+    </li>
+  )
+}
+
+async function Carousel() {
+  // `hidden-*` collections are hidden from the search page
+  const products = await getCollectionProducts({ collection: 'hidden-homepage-carousel' })
+  if (!products?.length) return null
+  const carouselProducts = [...products, ...products, ...products]
+
+  const styles = css({
+    display: 'flex',
+    height: '30vh',
+    width: '100vw',
+    gap: '1rem',
+    overflowX: 'hidden',
+    animation: 'marquee 60s linear infinite'
+  })
+
+  return (
+    <ul className={styles}>
+      {carouselProducts.map((item, i) => {
+        return <CarouselItem key={`${item.handle}-${i}`} item={item} />
+      })}
+    </ul>
+  )
+}
+
+export default function Home() {
+  const styles = css({
+    fontSize: '3xl',
+    height: 'calc(100vh - 4rem)'
+  })
+
+  return (
+    <VStack className={styles}>
       <ThreeItemGrid />
-      {/* <Carousel /> */}
-    </Center>
+      <Carousel />
+    </VStack>
   )
 }
