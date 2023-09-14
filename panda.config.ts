@@ -5,7 +5,7 @@ export default defineConfig({
   preflight: true,
 
   // Where to look for your css declarations
-  include: ['./components/**/*.{ts,tsx,js,jsx}', './app/**/*.{ts,tsx,js,jsx}'],
+  include: ['./src/**/*.{js,jsx,ts,tsx}', './main.tsx'],
 
   // Files to exclude
   exclude: [],
@@ -14,24 +14,25 @@ export default defineConfig({
   theme: {
     extend: {
       keyframes: {
-        marquee: {
+        loop: {
           '0%': {
             transform: 'translateX(0%)'
           },
           '100%': {
-            transform: 'translateX(-100%)'
+            transform: 'translateX(-50%)'
           }
         }
       },
       tokens: {
-        animations: {
-          // marquee: {
-          //   value: 'marquee 60s linear infinite'
-          // }
+        fonts: {
+          jakarta: { value: 'Plus Jakarta Sans, sans-serif' },
+          pacifico: { value: 'Pacifico, cursive;' }
         }
       }
     }
   },
+
+  // hash classnames for devtools readability
   hash: { cssVar: false, className: true },
 
   // enable codegen components

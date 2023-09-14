@@ -1,3 +1,4 @@
-# Setup
+# Infinite scroll animation
 
-Nextjs setup
+https://codepen.io/ykadosh/pen/KKezJzz
+
