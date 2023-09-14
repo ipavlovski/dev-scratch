@@ -4,10 +4,11 @@
 		"prepare": "panda codegen"
 	},
 	"dependencies": {
+		"@headlessui/react": "^1.7.17",
 		"dotenv": "^16.3.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-    "react-icons": "^4.11.0"
+		"react-icons": "^4.11.0"
 	},
 	"devDependencies": {
 		"@pandacss/dev": "^0.13.0",
