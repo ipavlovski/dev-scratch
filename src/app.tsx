@@ -53,12 +53,34 @@ function SideDialog() {
       p: '4'
     }),
     panel: css({
-      w: 'full',
-      maxW: 'sm',
-      rounded: 'rounded',
+      w: '60vw',
+      padding: '1rem',
+      borderRadius: '1rem',
       bgColor: 'white'
     }),
-    backdrop: css({ pos: 'fixed', inset: '0', bgColor: '#00000085' })
+    backdrop: css({ pos: 'fixed', inset: '0', bgColor: 'hsla(0, 0%, 0%, 0.5)' }),
+    title: css({
+      textTransform: 'uppercase',
+      fontSize: '1.2rem',
+      fontWeight: 'bolder',
+      color: 'orange.800'
+    }),
+    description: css({
+      marginBottom: '1rem',
+      color: 'gray.800',
+      fontSize: '.9rem'
+    }),
+    button: css({
+      textTransform: 'uppercase',
+      fontSize: '1rem',
+      padding: '.125em .5em',
+      border: '2px solid',
+      borderRadius: 'lg',
+      margin: '.25em',
+      _hover: { bg: 'slate.200', cursor: 'pointer' },
+      _firstOfType: { color: 'red.300', borderColor: 'red.300' },
+      _lastOfType: { color: 'blue.300', borderColor: 'blue.300' }
+    })
   }
 
   // todo: try-out a { opacity: 0, transform: 'translateY(40px)' } transform
@@ -73,12 +95,7 @@ function SideDialog() {
     (style, item) =>
       item && (
         <Dialog
-          onClose={setClosed}
-          open={item}
-          className={styles.dialog}
-          static
-          as={animated.div}
-          style={style}>
+          onClose={setClosed} open={item} className={styles.dialog} static as={animated.div} style={style}>
           {/* The backdrop, rendered as a fixed sibling to the panel container */}
           <div className={styles.backdrop} aria-hidden="true" />
 
@@ -86,15 +103,21 @@ function SideDialog() {
           <div className={styles.container}>
             {/* The actual dialog panel  */}
             <Dialog.Panel className={styles.panel}>
-              <Dialog.Title>Deactivate account</Dialog.Title>
-              <Dialog.Description>This will permanently deactivate your account</Dialog.Description>
+              <Dialog.Title className={styles.title}>Deactivate account</Dialog.Title>
+              <Dialog.Description className={styles.description}>
+                This will permanently deactivate your account
+              </Dialog.Description>
               <p>
                 Are you sure you want to deactivate your account? All of your data will be
                 permanently removed. This action cannot be undone.
               </p>
 
-              <button onClick={setClosed}>Deactivate</button>
-              <button onClick={setClosed}>Cancel</button>
+              <button onClick={setClosed} className={styles.button}>
+                Deactivate
+              </button>
+              <button onClick={setClosed} className={styles.button}>
+                Cancel
+              </button>
             </Dialog.Panel>
           </div>
         </Dialog>
