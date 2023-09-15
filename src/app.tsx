@@ -1,6 +1,6 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { Fragment, useState } from 'react'
-import { LuBird, LuShoppingCart, LuXSquare } from 'react-icons/lu'
+import { Dialog } from '@headlessui/react'
+import { animated, useTransition } from '@react-spring/web'
+import { LuBird, LuShoppingCart } from 'react-icons/lu'
 import { css } from 'styled-system/css'
 import { create } from 'zustand'
 
@@ -29,11 +29,9 @@ function CartIcon() {
   const { setOpen } = useDialogStore()
 
   return (
-    <>
-      <div className={cartStyles}>
-        <LuShoppingCart size="1.5rem" onClick={setOpen} />
-      </div>
-    </>
+    <div className={cartStyles}>
+      <LuShoppingCart size="1.5rem" onClick={setOpen} />
+    </div>
   )
 }
 
@@ -63,62 +61,44 @@ function SideDialog() {
     backdrop: css({ pos: 'fixed', inset: '0', bgColor: '#00000085' })
   }
 
-  const transitions = {
-    enter: css({
-      transitionProperty: 'all',
-      transitionTimingFunction: 'ease-in-out',
-      transitionDuration: '900ms'
-    }),
-    enterFrom: css({
-      opacity: 0
-    }),
-    enterTo: css({
-      opacity: '1'
-    }),
-    leave: css({
-      transitionProperty: 'all',
-      transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      transitionDuration: '300ms'
-    }),
-    leaveFrom: css({
-      opacity: '1'
-    }),
-    leaveTo: css({
-      opacity: '0'
-    })
-  }
+  // todo: try-out a { opacity: 0, transform: 'translateY(40px)' } transform
+  const transitions = useTransition(isOpen, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+    config: { duration: 100 }
+  })
 
-  return (
-    <Transition
-      show={isOpen}
-      enter={transitions.enter}
-      enterFrom={transitions.enterFrom}
-      enterTo={transitions.enterTo}
-      leave={transitions.leave}
-      leaveFrom={transitions.leaveFrom}
-      leaveTo={transitions.leaveTo}
-      as={Fragment}>
-      <Dialog onClose={setClosed} className={styles.dialog}>
-        {/* The backdrop, rendered as a fixed sibling to the panel container */}
-        <div className={styles.backdrop} aria-hidden="true" />
+  return transitions(
+    (style, item) =>
+      item && (
+        <Dialog
+          onClose={setClosed}
+          open={item}
+          className={styles.dialog}
+          static
+          as={animated.div}
+          style={style}>
+          {/* The backdrop, rendered as a fixed sibling to the panel container */}
+          <div className={styles.backdrop} aria-hidden="true" />
 
-        {/* Full-screen container to center the panel */}
-        <div className={styles.container}>
-          {/* The actual dialog panel  */}
-          <Dialog.Panel className={styles.panel}>
-            <Dialog.Title>Deactivate account</Dialog.Title>
-            <Dialog.Description>This will permanently deactivate your account</Dialog.Description>
-            <p>
-              Are you sure you want to deactivate your account? All of your data will be permanently
-              removed. This action cannot be undone.
-            </p>
+          {/* Full-screen container to center the panel */}
+          <div className={styles.container}>
+            {/* The actual dialog panel  */}
+            <Dialog.Panel className={styles.panel}>
+              <Dialog.Title>Deactivate account</Dialog.Title>
+              <Dialog.Description>This will permanently deactivate your account</Dialog.Description>
+              <p>
+                Are you sure you want to deactivate your account? All of your data will be
+                permanently removed. This action cannot be undone.
+              </p>
 
-            <button onClick={setClosed}>Deactivate</button>
-            <button onClick={setClosed}>Cancel</button>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
-    </Transition>
+              <button onClick={setClosed}>Deactivate</button>
+              <button onClick={setClosed}>Cancel</button>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )
   )
 }
 
