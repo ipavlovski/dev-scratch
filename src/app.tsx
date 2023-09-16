@@ -16,25 +16,6 @@ const useDialogStore = create<DialogState>()((set) => ({
   setClosed: () => set(() => ({ isOpen: false }))
 }))
 
-function CartIcon() {
-  const cartStyles = css({
-    marginLeft: 'auto',
-    marginRight: '1rem',
-    _hover: {
-      color: 'emerald.400',
-      cursor: 'pointer'
-    }
-  })
-
-  const { setOpen } = useDialogStore()
-
-  return (
-    <div className={cartStyles}>
-      <LuShoppingCart size="1.5rem" onClick={setOpen} />
-    </div>
-  )
-}
-
 function SideDialog() {
   const { isOpen, setClosed } = useDialogStore()
 
@@ -45,18 +26,23 @@ function SideDialog() {
     }),
     container: css({
       pos: 'fixed',
-      inset: '0',
-      display: 'flex',
-      w: 'screen',
-      alignItems: 'center',
-      justifyContent: 'center',
-      p: '4'
+      // width: '80vw',
+      height: '100vh',
+      right: 0,
+      top: 0
+      // inset: '0',
+      // display: 'flex',
+      // w: '100vw',
+      // h: '100vh',
+      // alignItems: 'center',
+      // justifyContent: 'center',
     }),
     panel: css({
       w: '60vw',
       padding: '1rem',
       borderRadius: '1rem',
-      bgColor: 'white'
+      bgColor: 'slate.100',
+      height: '100%'
     }),
     backdrop: css({ pos: 'fixed', inset: '0', bgColor: 'hsla(0, 0%, 0%, 0.5)' }),
     title: css({
@@ -83,19 +69,26 @@ function SideDialog() {
     })
   }
 
-  // todo: try-out a { opacity: 0, transform: 'translateY(40px)' } transform
   const transitions = useTransition(isOpen, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
-    config: { duration: 100 }
+    from: { opacity: 0, transform: 'translateX(-100%)' },
+    enter: { opacity: 1, transform: 'translateX(0%)' },
+    leave: { opacity: 0, transform: 'translateX(-100%)' },
+    // from: { opacity: 0,  },
+    // enter: { opacity: 1,  },
+    // leave: { opacity: 0,  },
+    config: { duration: 500 }
   })
 
   return transitions(
     (style, item) =>
       item && (
         <Dialog
-          onClose={setClosed} open={item} className={styles.dialog} static as={animated.div} style={style}>
+          onClose={setClosed}
+          open={item}
+          className={styles.dialog}
+          static
+          as={animated.div}
+          style={style}>
           {/* The backdrop, rendered as a fixed sibling to the panel container */}
           <div className={styles.backdrop} aria-hidden="true" />
 
@@ -122,6 +115,25 @@ function SideDialog() {
           </div>
         </Dialog>
       )
+  )
+}
+
+function CartIcon() {
+  const cartStyles = css({
+    marginLeft: 'auto',
+    marginRight: '1rem',
+    _hover: {
+      color: 'emerald.400',
+      cursor: 'pointer'
+    }
+  })
+
+  const { setOpen } = useDialogStore()
+
+  return (
+    <div className={cartStyles}>
+      <LuShoppingCart size="1.5rem" onClick={setOpen} />
+    </div>
   )
 }
 
