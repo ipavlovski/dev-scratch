@@ -1,11 +1,12 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
+import FullReload from 'vite-plugin-full-reload'
 
 export default ({ mode }: { mode: string }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
   return defineConfig({
-    plugins: [react()],
+    plugins: [react(), FullReload(['src/app2.tsx'])],
 
     server: {
       port: parseInt(process.env.VITE_PORT!),
