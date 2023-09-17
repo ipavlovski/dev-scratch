@@ -9,9 +9,12 @@ function MyDialog({ toggle }: { toggle: ToggleState }) {
   const [isShowing, setShowing] = toggle
 
   const transition = useTransition(isShowing, {
-    from: { opacity: 0 },
-    enter: { opacity: 1 },
-    leave: { opacity: 0 },
+    from: { right: '-100%' },
+    enter: { right: '-80vw' },
+    leave: { right: '-100%' },
+    config: {
+      duration: 300,
+    },
   })
 
   const styles = {
@@ -22,14 +25,14 @@ function MyDialog({ toggle }: { toggle: ToggleState }) {
     backdrop: css({
       pos: 'fixed',
       inset: '0',
-      bg: '#020202e4',
+      // bg: '#020202e4',
     }),
     container: css({
       pos: 'fixed',
-      width: '200px',
-      height: '200px',
-      left: '100px',
-      top: '100px',
+      width: '20vw',
+      height: '100vh',
+
+      top: '0',
       background: 'gray.300',
     }),
     panel: css({
