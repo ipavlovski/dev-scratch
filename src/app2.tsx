@@ -16,17 +16,30 @@ function MyDialog({ toggle }: { toggle: ToggleState }) {
 
   const styles = {
     dialog: css({
-      position: 'absolute',
+      position: 'relative',
+      zIndex: 50,
+    }),
+    backdrop: css({
+      pos: 'fixed',
+      inset: '0',
+      bg: '#020202e4',
+    }),
+    container: css({
+      pos: 'fixed',
       width: '200px',
       height: '200px',
       left: '100px',
       top: '100px',
       background: 'gray.300',
     }),
-    backdrop: css({}),
-    container: css({}),
-    panel: css({}),
-    title: css({}),
+    panel: css({
+      width: '100%',
+      height: '100%',
+    }),
+    title: css({
+      fontSize: '1.5rem',
+      fontWeight: 'extrabold',
+    }),
   }
 
   const hide = () => setShowing(false)
@@ -45,7 +58,9 @@ function MyDialog({ toggle }: { toggle: ToggleState }) {
               <div className={styles.container}>
                 {/* The actual dialog panel  */}
                 <Dialog.Panel className={styles.panel}>
-                  <Dialog.Title>Complete your order</Dialog.Title>
+                  <Dialog.Title className={styles.title}>
+                    Is this what you came here for?
+                  </Dialog.Title>
 
                   <p>This is an item</p>
                 </Dialog.Panel>
