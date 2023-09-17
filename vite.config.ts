@@ -6,6 +6,7 @@ export default ({ mode }: { mode: string }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
   return defineConfig({
+    // plugins: [react()],
     plugins: [react(), FullReload(['src/app2.tsx'])],
 
     server: {
