@@ -1,31 +1,38 @@
 {
-  "scripts": {
-    "dev": "vite",
-    "prepare": "panda codegen"
-  },
-  "dependencies": {
-    "@headlessui/react": "^1.7.17",
-    "@react-spring/web": "^9.7.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^4.11.0",
-    "zustand": "^4.4.1"
-  },
-  "devDependencies": {
-    "@pandacss/dev": "^0.13.0",
-    "@types/node": "^20.5.7",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
-    "@typescript-eslint/eslint-plugin": "^6.4.1",
-    "@typescript-eslint/parser": "^6.4.1",
-    "@vitejs/plugin-react": "^4.0.4",
-    "dprint": "^0.41.0",
-    "eslint": "^8.48.0",
-    "eslint-plugin-react": "^7.33.2",
-    "postcss": "^8.4.28",
-    "sass": "^1.66.1",
-    "vite": "^4.4.9",
-    "vite-plugin-full-reload": "^1.0.5",
-    "dotenv": "^16.3.1"
-  }
+	"private": true,
+	"packageManager": "pnpm@8.6.12",
+	"engines": {
+		"node": ">=20",
+		"pnpm": ">=8"
+	},
+	"scripts": {
+		"dev": "next dev -p 3001",
+		"build": "next build",
+		"start": "next start",
+		"prepare": "panda codegen",
+    "repl": "while true; do /usr/bin/ts-node -e 'console.clear(); console.log(\"ready\")' -i; sleep 0; done"
+	},
+	"dependencies": {
+		"next": "^13.4.19",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"react-icons": "^4.11.0"
+	},
+	"devDependencies": {
+		"@pandacss/dev": "^0.14.0",
+		"@types/node": "^20.6.0",
+		"@types/react": "^18.2.21",
+		"@types/react-dom": "^18.2.7",
+		"@typescript-eslint/eslint-plugin": "^6.7.0",
+		"@typescript-eslint/parser": "^6.7.0",
+		"@vercel/git-hooks": "^1.0.0",
+		"@vitejs/plugin-react": "^4.0.4",
+		"dotenv": "^16.3.1",
+		"eslint": "^8.49.0",
+		"eslint-config-next": "^13.4.19",
+		"postcss": "^8.4.29",
+		"sass": "^1.66.1",
+		"tsconfig-paths": "^4.2.0",
+    "dprint": "^0.41.0"
+	}
 }
