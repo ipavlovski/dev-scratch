@@ -5,9 +5,14 @@ import { css } from 'styled-system/css'
 import { styled } from '../styled-system/jsx'
 
 type ToggleState = [boolean, React.Dispatch<React.SetStateAction<boolean>>]
-
 function MyDialog({ toggle }: { toggle: ToggleState }) {
   const [isShowing, setShowing] = toggle
+
+  const transition = useTransition(isShowing, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  })
 
   const styles = {
     dialog: css({
@@ -16,29 +21,39 @@ function MyDialog({ toggle }: { toggle: ToggleState }) {
       height: '200px',
       left: '100px',
       top: '100px',
-      background: 'gray.300'
+      background: 'gray.300',
     }),
     backdrop: css({}),
     container: css({}),
     panel: css({}),
-    title: css({})
+    title: css({}),
   }
 
+  const hide = () => setShowing(false)
+
   return (
-    <Dialog open={isShowing} onClose={() => setShowing(false)} className={styles.dialog}>
-      {/* The backdrop, rendered as a fixed sibling to the panel container */}
-      <div className={styles.backdrop} aria-hidden="true" />
+    <>
+      {transition(
+        (style, item) =>
+          item && (
+            <Dialog open={isShowing} onClose={hide} style={style} className={styles.dialog} static
+              as={a.div}>
+              {/* The backdrop, rendered as a fixed sibling to the panel container */}
+              <div className={styles.backdrop} aria-hidden='true' />
 
-      {/* Full-screen container to center the panel */}
-      <div className={styles.container}>
-        {/* The actual dialog panel  */}
-        <Dialog.Panel className={styles.panel}>
-          <Dialog.Title>Complete your order</Dialog.Title>
+              {/* Full-screen container to center the panel */}
+              <div className={styles.container}>
+                {/* The actual dialog panel  */}
+                <Dialog.Panel className={styles.panel}>
+                  <Dialog.Title>Complete your order</Dialog.Title>
 
-          <p>This is an item</p>
-        </Dialog.Panel>
-      </div>
-    </Dialog>
+                  <p>This is an item</p>
+                </Dialog.Panel>
+              </div>
+            </Dialog>
+          ),
+      )}
+    </>
   )
 }
 
@@ -52,7 +67,7 @@ function Button({ toggle }: { toggle: ToggleState }) {
     padding: '.5em',
     rounded: 'xl',
     textTransform: 'uppercase',
-    _hover: { bg: 'yellow.700' }
+    _hover: { bg: 'yellow.700' },
   })
 
   return (
@@ -70,7 +85,7 @@ export default function App() {
     width: '100vw',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   })
 
   const toggle = useState(false)

@@ -16,20 +16,20 @@ export default defineConfig({
       keyframes: {
         loop: {
           '0%': {
-            transform: 'translateX(0%)'
+            transform: 'translateX(0%)',
           },
           '100%': {
-            transform: 'translateX(-50%)'
-          }
-        }
+            transform: 'translateX(-50%)',
+          },
+        },
       },
       tokens: {
         fonts: {
           jakarta: { value: 'Plus Jakarta Sans, sans-serif' },
-          pacifico: { value: 'Pacifico, cursive;' }
-        }
-      }
-    }
+          pacifico: { value: 'Pacifico, cursive;' },
+        },
+      },
+    },
   },
 
   // hash classnames for devtools readability
@@ -39,5 +39,5 @@ export default defineConfig({
   jsxFramework: 'react',
 
   // The output directory for your css system
-  outdir: 'styled-system'
+  outdir: 'styled-system',
 })

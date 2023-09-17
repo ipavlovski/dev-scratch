@@ -6,7 +6,6 @@ export default ({ mode }: { mode: string }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
   return defineConfig({
-    // plugins: [react()],
     plugins: [react(), FullReload(['src/app2.tsx'])],
 
     server: {
@@ -14,21 +13,21 @@ export default ({ mode }: { mode: string }) => {
       host: true,
       https: {
         key: `${process.env.HOME}/.config/ssl/local/local.key`,
-        cert: `${process.env.HOME}/.config/ssl/local/local.crt`
-      }
+        cert: `${process.env.HOME}/.config/ssl/local/local.crt`,
+      },
     },
 
     resolve: {
       alias: [
         {
           find: 'src',
-          replacement: `${__dirname}/src`
+          replacement: `${__dirname}/src`,
         },
         {
           find: 'styled-system',
-          replacement: `${__dirname}/styled-system`
-        }
-      ]
-    }
+          replacement: `${__dirname}/styled-system`,
+        },
+      ],
+    },
   })
 }
