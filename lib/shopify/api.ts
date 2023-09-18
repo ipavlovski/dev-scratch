@@ -1,13 +1,7 @@
 import { ENDPOINT, HIDDEN_PRODUCT_TAG, KEY, TAGS } from 'lib/shopify/constants'
-import { getCollectionProductsQuery } from 'lib/shopify/queries'
-import {
-  Connection,
-  Image,
-  Product,
-  ShopifyCollectionProductsOperation,
-  ShopifyErrorLike,
-  ShopifyProduct
-} from 'lib/shopify/types'
+import { getCollectionProductsQuery, getProductQuery } from 'lib/shopify/queries'
+import { Connection, Image, Product, ShopifyCollectionProductsOperation, ShopifyErrorLike,
+  ShopifyProduct, ShopifyProductOperation } from 'lib/shopify/types'
 
 type ExtractVariables<T> = T extends { variables: object } ? T['variables'] : never
 
@@ -16,7 +10,7 @@ export async function shopifyFetch<T>({
   headers,
   query,
   tags,
-  variables
+  variables,
 }: {
   cache?: RequestCache
   headers?: HeadersInit
@@ -30,14 +24,14 @@ export async function shopifyFetch<T>({
       headers: {
         'Content-Type': 'application/json',
         'X-Shopify-Storefront-Access-Token': KEY,
-        ...headers
+        ...headers,
       },
       body: JSON.stringify({
         ...(query && { query }),
-        ...(variables && { variables })
+        ...(variables && { variables }),
       }),
       cache,
-      ...(tags && { next: { tags } })
+      ...(tags && { next: { tags } }),
     })
 
     const body = await result.json()
@@ -48,7 +42,7 @@ export async function shopifyFetch<T>({
 
     return {
       status: result.status,
-      body
+      body,
     }
   } catch (e) {
     if (isShopifyError(e)) {
@@ -56,13 +50,13 @@ export async function shopifyFetch<T>({
         cause: e.cause?.toString() || 'unknown',
         status: e.status || 500,
         message: e.message,
-        query
+        query,
       }
     }
 
     throw {
       error: e,
-      query
+      query,
     }
   }
 }
@@ -100,7 +94,7 @@ const reshapeImages = (images: Connection<Image>, productTitle: string) => {
     const filename = image.url.match(/.*\/(.*)\..*/)[1]
     return {
       ...image,
-      altText: image.altText || `${productTitle} - ${filename}`
+      altText: image.altText || `${productTitle} - ${filename}`,
     }
   })
 }
@@ -115,7 +109,7 @@ const reshapeProduct = (product: ShopifyProduct, filterHiddenProducts: boolean =
   return {
     ...rest,
     images: reshapeImages(images, product.title),
-    variants: removeEdgesAndNodes(variants)
+    variants: removeEdgesAndNodes(variants),
   }
 }
 
@@ -145,8 +139,8 @@ export async function getCollectionProducts(props: getCollectionProductsProps): 
     variables: {
       handle: collection,
       reverse,
-      sortKey: sortKey === 'CREATED_AT' ? 'CREATED' : sortKey
-    }
+      sortKey: sortKey === 'CREATED_AT' ? 'CREATED' : sortKey,
+    },
   })
 
   if (!res.body.data.collection) {
@@ -155,4 +149,16 @@ export async function getCollectionProducts(props: getCollectionProductsProps): 
   }
 
   return reshapeProducts(removeEdgesAndNodes(res.body.data.collection.products))
+}
+
+export async function getProduct(handle: string): Promise<Product | undefined> {
+  const res = await shopifyFetch<ShopifyProductOperation>({
+    query: getProductQuery,
+    tags: [TAGS.products],
+    variables: {
+      handle,
+    },
+  })
+
+  return reshapeProduct(res.body.data.product, false)
 }
