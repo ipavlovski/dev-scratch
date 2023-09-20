@@ -1,5 +1,5 @@
 # React with panda-css starter
 
-STICKY PARALLAX EXAMPLE (react-spring)
-https://www.react-spring.dev/docs/components/parallax-layer
-https://codesandbox.io/s/3hsg6
+NON-PARALLAX EXAMPLE
+https://docs.pmnd.rs/react-three-fiber/getting-started/examples - camera scroll
+https://codesandbox.io/s/tu24h
