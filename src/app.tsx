@@ -1,61 +1,69 @@
-import type { ForwardedRef, MutableRefObject, UIEventHandler } from 'react'
-import { forwardRef, useCallback, useRef } from 'react'
-import { css } from 'styled-system/css'
+import { animated, useSpring } from '@react-spring/web'
+import { useCallback, useState } from 'react'
+import { css, cx } from 'styled-system/css'
+import { Box, Center, HStack, VStack } from 'styled-system/jsx'
 
-const Caption = forwardRef((props, ref: ForwardedRef<HTMLSpanElement>) => {
+function Button() {
+  const [isFull, toggle] = useState(false)
+
   const styles = css({
-    pointerEvents: 'none',
-    position: 'fixed',
-    top: 10,
-    right: 10,
-    color: 'white',
-    fontSize: '1rem'
+    cursor: 'pointer',
+    width: '20ch',
+    textAlign: 'center',
+    border: '2px solid #fefefe',
+    color: '#fefefe',
+    padding: '.75rem',
+    rounded: '2xl',
   })
 
-  return <span className={styles} ref={ref}>0.00</span>
-})
-
-type OverlayProps = { scroll: MutableRefObject<number> }
-const Overlay = forwardRef<HTMLDivElement, OverlayProps>(({ scroll }, ref) => {
-  const styles = css({
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    overflowY: 'auto',
+  const vanillaShort = css({
+    width: '20ch',
+    transition: 'all 400ms'
   })
 
-  const caption = useRef<HTMLSpanElement>(null!)
+  const vanillaLong = css({
+    width: '40ch',
+    transition: 'all 400ms'
+  })
 
-  const scrollHandler = useCallback<UIEventHandler>((e) => {
-    const target = e.target as HTMLElement
-    scroll.current = target.scrollTop / (target.scrollHeight - window.innerHeight)
-    console.log(scroll.current)
-    caption.current.innerText = scroll.current.toFixed(2)
-  }, [])
+  // const clickHandler = useCallback(() => toggle(!isFull), [isFull])
+  const clickHandler = () => toggle(!isFull)
+  const props = useSpring({ width: isFull ? '20ch' : '40ch' })
+  // const props = useSpring({ asdf: isFull ? 100 : 1200 })
+
 
   return (
-    <div ref={ref} onScroll={scrollHandler} className={styles}>
-      <div style={{ height: '500vh' }}></div>
-      <Caption ref={caption} />
-    </div>
+    <VStack>
+      <animated.div className={styles} style={{ ...props }} onClick={clickHandler}>
+        click here
+        {/* {props.width.to(value => parseFloat(value).toFixed(2))} */}
+      </animated.div>
+
+      <animated.div style={{ color: 'white' }}>
+        {props.width.to(v => v)}
+        {/* {props.asdf.to(v => v)} */}
+      </animated.div>
+
+      <div className={cx(styles, isFull ? vanillaShort : vanillaLong)}>
+        Some value...
+      </div>
+    </VStack>
   )
-})
+}
 
 export default function App() {
   const styles = css({
     width: '100vw',
     height: '100vh',
     background: 'radial-gradient(circle at bottom center, #212121 0%, #101010 80%)',
+    '& h1': { color: 'white' },
   })
-
-  const overlay = useRef<HTMLDivElement>(null!)
-  const scroll = useRef(0)
 
   return (
     <div className={styles}>
-      <Overlay ref={overlay} scroll={scroll} />
+      <Center h='full'>
+        <Button />
+      </Center>
     </div>
   )
 }
