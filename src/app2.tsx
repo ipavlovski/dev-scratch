@@ -1,7 +1,9 @@
+import { animated, SpringValue, useSprings } from '@react-spring/web'
 import { css } from 'styled-system/css'
 import { Center, VStack } from 'styled-system/jsx'
 
-function DraggableItem({ item, ind }: { item: string; ind: number }) {
+type Spring = { opacity: SpringValue<number>}
+function DraggableItem({ item, ind, spring }: { item: string; ind: number; spring: Spring }) {
   const styles = css({
     position: 'absolute',
     width: '200px',
@@ -28,7 +30,7 @@ function DraggableItem({ item, ind }: { item: string; ind: number }) {
     },
   })
 
-  return <div className={styles} style={{ top: ind * 50 }}>{item}</div>
+  return <animated.div className={styles} style={{ top: ind * 50, ...spring }}>{item}</animated.div>
 }
 
 function DraggableList({ items }: { items: string[] }) {
@@ -38,9 +40,16 @@ function DraggableList({ items }: { items: string[] }) {
     height: '100px',
   })
 
+  const [springs, api] = useSprings(items.length, (ind) => {
+    return {
+      from: { opacity: 0 },
+      to: { opacity: 1 },
+    }
+  })
+
   return (
     <div className={styles} style={{ height: items.length * 50 }}>
-      {items.map((item, ind) => <DraggableItem item={item} ind={ind} />)}
+      {springs.map((spring, ind) => <DraggableItem item={items[ind]} ind={ind} spring={spring} />)}
     </div>
   )
 }
