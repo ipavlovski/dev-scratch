@@ -18,18 +18,24 @@ function Button() {
 
   const vanillaShort = css({
     width: '20ch',
-    transition: 'all 400ms'
+    transition: 'all 400ms',
   })
 
   const vanillaLong = css({
     width: '40ch',
-    transition: 'all 400ms'
+    transition: 'all 400ms',
   })
 
   // const clickHandler = useCallback(() => toggle(!isFull), [isFull])
   const clickHandler = () => toggle(!isFull)
   const props = useSpring({ width: isFull ? '20ch' : '40ch' })
   // const props = useSpring({ asdf: isFull ? 100 : 1200 })
+
+  const [springs, api] = useSpring(() => ({
+    from: { width: '20ch' },
+    to: { width: '40ch' },
+  }))
+  const clickHandler2 = () => api.start({ from: { width: '20ch' }, to: { width: '40ch' } })
 
 
   return (
@@ -47,6 +53,11 @@ function Button() {
       <div className={cx(styles, isFull ? vanillaShort : vanillaLong)}>
         Some value...
       </div>
+
+      <animated.div className={styles} style={{ ...springs }} onClick={clickHandler2}>
+        API based
+        {/* {props.width.to(value => parseFloat(value).toFixed(2))} */}
+      </animated.div>
     </VStack>
   )
 }
