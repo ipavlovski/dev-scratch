@@ -57,12 +57,46 @@ function Deck() {
     },
   })
 
+  const [gone] = useState(() => new Set<number>())
   const [props, api] = useSprings(cards.length, i => ({ ...to(i), from: from(i) }))
+
+  const bind = useDrag(
+    ({ args: [index], active, movement: [mx], direction: [xDir], velocity: [vx] }) => {
+      // The set flags all the cards that are flicked out
+      const trigger = vx > 0.2 // If you flick hard enough it should trigger the card to fly out
+      // if NOT acttive and has trigger velocity, make the card 'fly-out'
+      if (!active && trigger) gone.add(index)
+
+      api.start(i => {
+        // We're only interested in changing spring-data for the current spring
+        if (index !== i) return 
+        const isGone = gone.has(index)
+        const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0 // When a card is gone it flys out left or right, otherwise goes back to zero
+        const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0) // How much the card tilts, flicking it harder makes it rotate faster
+        const scale = active ? 1.1 : 1 // Active cards lift up a bit
+        return {
+          x,
+          rot,
+          scale,
+          delay: undefined,
+          config: { friction: 50, tension: active ? 800 : isGone ? 200 : 500 },
+        }
+      })
+
+      if (!active && gone.size === cards.length) {
+        setTimeout(() => {
+          gone.clear()
+          api.start(i => to(i))
+        }, 600)
+      }
+    },
+  )
+
   return (
     <>
-      {props.map(({rot, scale, }, ind) => (
-        <animated.div className={styles} key={ind}>
-          <animated.div style={{
+      {props.map(({ rot, scale, x, y }, ind) => (
+        <animated.div className={styles} key={ind} style={{x, y}}>
+          <animated.div {...bind(ind)} style={{
             transform: interpolate([rot, scale], transform),
             backgroundImage: `url(${cards[ind]})`,
           }}>
