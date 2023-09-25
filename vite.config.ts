@@ -6,7 +6,7 @@ export default ({ mode }: { mode: string }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
   return defineConfig({
-    plugins: [react()], // FullReload(['src/app.tsx'])
+    plugins: [react(), FullReload(['src/app*.tsx'])], // FullReload(['src/app.tsx'])
 
     server: {
       port: parseInt(process.env.VITE_PORT!),

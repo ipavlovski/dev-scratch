@@ -14,6 +14,13 @@ const cards = [
 ]
 
 // TO and FROM
+const from = (_i: number) => ({
+  x: 0,
+  y: -1000,
+  scale: 1.5,
+  rot: 0,
+})
+
 const to = (i: number) => ({
   x: 0,
   y: i * -4,
@@ -21,12 +28,7 @@ const to = (i: number) => ({
   rot: -10 + Math.random() * 20,
   delay: i * 100,
 })
-const from = (_i: number) => ({
-  x: 0,
-  y: -1000,
-  scale: 1.5,
-  rot: 0,
-})
+
 const transform = (r: number, s: number) =>
   `perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
 
@@ -44,6 +46,7 @@ function Deck() {
       touchAction: 'none',
       backgroundColor: 'white',
       backgroundSize: 'auto 85%',
+
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center center',
       width: '45vh',

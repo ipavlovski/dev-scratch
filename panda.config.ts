@@ -21,6 +21,14 @@ export default defineConfig({
           '100%': {
             transform: 'translateX(-100%)'
           }
+        },
+        slideInFromLeft: {
+          '0%': {
+            transform: 'translateX(-100%)',
+          },
+          '100%': {
+            transform: 'translateX(0)',
+          }
         }
       },
       tokens: {
