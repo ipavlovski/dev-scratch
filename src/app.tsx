@@ -105,11 +105,11 @@ function Button2() {
       width: '2rem',
       transition: 'width 400ms',
       '&:hover': {
-        width: '10rem'
+        width: '10rem',
       },
       '&:hover h1': {
         display: 'block',
-      }
+      },
     }),
     linkIcon: css({}),
     linkText: css({
@@ -125,7 +125,6 @@ function Button2() {
   )
 }
 
-
 function Button3() {
   const styles = {
     navbar: css({
@@ -136,11 +135,11 @@ function Button3() {
       width: '2rem',
       transition: 'width 400ms',
       '&:hover': {
-        width: '10rem'
+        width: '10rem',
       },
     }),
     linkShow: css({
-      display: 'block'
+      display: 'block',
     }),
     linkHide: css({
       display: 'none',
@@ -150,10 +149,41 @@ function Button3() {
   const [isHover, setHover] = useState(false)
 
   return (
-    <div className={styles.navbar} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <div >L</div>
+    <div className={styles.navbar} onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}>
+      <div>L</div>
       <h1 className={isHover ? styles.linkShow : styles.linkHide}>LOOOOOL</h1>
     </div>
+  )
+}
+
+function Button4() {
+  const [isFull, toggle] = useState(false)
+
+  const styles = css({
+    cursor: 'pointer',
+    width: '20px',
+    textAlign: 'center',
+    border: '2px solid #fefefe',
+    color: '#fefefe',
+    padding: '.75rem',
+    rounded: '2xl',
+  })
+
+  const [springs, api] = useSpring(() => ({ from: { width: 10, opacity: 0 },
+    to: { width: 300, opacity: 1 } })
+  )
+
+  const clickHandler = () => api.start({ to: { width: 200 } })
+
+  return (
+    <>
+      <Box color='white' onClick={clickHandler}>CLICK ME</Box>
+      <Box color='white' onClick={() => api.start({ width: 50})}>CLICK ME AGAIN</Box>
+      <animated.div className={styles} style={{ ...springs }}>
+        Springy width
+      </animated.div>
+    </>
   )
 }
 
@@ -162,16 +192,16 @@ export default function App() {
     width: '100vw',
     height: '100vh',
     background: 'radial-gradient(circle at bottom center, #212121 0%, #101010 80%)',
-    '& h1': { color: 'white' },
   })
 
   return (
     <div className={styles}>
-      <Stack h='100vh' align='center' justify='center'>
+      <Stack h='100vh' align='center' pt='2rem'>
         {/* <Button /> */}
-        <Button1 />
+        {/* <Button1 /> */}
         {/* <Button2 /> */}
-        <Button3 />
+        {/* <Button3 /> */}
+        <Button4 />
       </Stack>
     </div>
   )

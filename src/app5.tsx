@@ -46,7 +46,6 @@ function Deck() {
       touchAction: 'none',
       backgroundColor: 'white',
       backgroundSize: 'auto 85%',
-
       backgroundRepeat: 'no-repeat',
       backgroundPosition: 'center center',
       width: '45vh',
@@ -108,6 +107,11 @@ function Deck() {
       ))}
     </>
   )
+}
+
+
+function Button() {
+  return <div style={{  }} ></div>
 }
 
 export default function App() {
