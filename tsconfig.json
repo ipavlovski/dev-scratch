@@ -1,33 +1,22 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ESNext",
-    "outDir": "dist",
-    "sourceMap": true,
-    "esModuleInterop": true,
-    "types": ["node", "vite/client"],
-    "moduleResolution": "Node",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "useDefineForClassFields": true,
-    "allowJs": false,
-    "skipLibCheck": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "lib": ["ESNext"],
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
     "noEmit": true,
+    "composite": true,
+    "strict": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true,
     "jsx": "react-jsx",
-    "baseUrl": "."
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS",
-      "target": "ES2022",
-      "types": ["node"],
-      "lib": ["ES2022"]
-    },
-    "ignoreDiagnostics": [2393, 2300],
-    "require": ["dotenv/config"],
-    "exclude": ["node_modules", "scratch.ts"]
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "types": [
+      "bun-types" // add Bun global
+    ]
   }
 }
