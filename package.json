@@ -1,14 +1,35 @@
 {
-  "name": "dev-scratch",
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "bun-types": "latest",
-    "dprint": "^0.41.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "scripts": {
+    "dev": "vite",
+    "prepare": "panda codegen"
   },
   "dependencies": {
+    "@visx/geo": "^3.3.0",
+    "@visx/responsive": "^3.3.0",
+    "@visx/scale": "^3.3.0",
+    "@visx/zoom": "^3.3.0",
+    "d3-geo": "^3.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
+    "zustand": "^4.4.1"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^0.13.0",
+    "@types/d3-geo": "^3.0.5",
+    "@types/node": "^20.5.7",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "@vitejs/plugin-react": "^4.0.4",
+    "dotenv": "^16.3.1",
+    "dprint": "^0.41.0",
+    "eslint": "^8.48.0",
+    "eslint-plugin-react": "^7.33.2",
+    "postcss": "^8.4.28",
+    "sass": "^1.66.1",
+    "vite": "^4.4.9",
+    "vite-plugin-full-reload": "^1.0.5"
   }
 }
