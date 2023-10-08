@@ -57,8 +57,7 @@ function InnerRing() {
 
 function TrackCover() {
   const styles = css({
-    animation: 'ball 3s linear infinite',
-    animationName: 'trackCover',
+    animation: 'trackCover 3s linear infinite',
     backgroundImage: 'conic-gradient(hsla(223, 90%, 95%, 1) 210deg, hsla(223, 90%, 95%, 0) 270deg)',
     top: 0,
     left: 0,
@@ -93,8 +92,7 @@ function Ball({ children }: { children: ReactNode }) {
 
 function OuterShadow() {
   const styles = css({
-    animation: 'ball 3s linear infinite',
-    animationName: 'ballOuterShadow',
+    animation: 'ballOuterShadow 3s linear infinite',
     backgroundImage: 'linear-gradient(hsla(0, 0%, 0%, 0.15),hsla(0, 0%, 0%, 0))',
     borderRadius: '0 0 50% 50% / 0 0 100% 100%',
     filter: 'blur(2px)',
@@ -178,7 +176,7 @@ function Texture() {
 export default function App() {
   const styles = css({
     backgroundColor: 'hsl(223, 90%, 95%)',
-    // font: '1em / 1.5 sans-serif',
+    font: '1em / 1.5 sans-serif',
     height: '100vh',
     display: 'grid',
     placeItems: 'center',
