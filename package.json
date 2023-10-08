@@ -5,7 +5,6 @@
   "devDependencies": {
     "bun-types": "latest",
     "dprint": "^0.41.0"
-
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
