@@ -1,200 +1,141 @@
-import { ReactNode } from 'react'
+import { _SunLight as SunLight, AmbientLight, Color, LightingEffect,
+  PickingInfo } from '@deck.gl/core/typed'
+import { GeoJsonLayer, PolygonLayer } from '@deck.gl/layers/typed'
+import DeckGL from '@deck.gl/react/typed'
+import { scaleThreshold } from 'd3-scale'
+import maplibregl from 'maplibre-gl'
+import React, { useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import { Map } from 'react-map-gl'
 import { css } from 'styled-system/css'
 
-function Preloader({ children }: { children: ReactNode }) {
-  const styles = css({
-    fontSize: 'calc(16px + (20 - 16) * (100vw - 320px) / (1280 - 320))',
-    position: 'relative',
-    width: '16em',
-    height: '16em',
-    borderRadius: '50%',
-  })
+import { supported } from '@mapbox/mapbox-gl-supported'
+
+const maplibreglWithSupported = { ...maplibregl, supported }
+
+// Source data GeoJSON
+const DATA_URL =
+  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/geojson/vancouver-blocks.json' // eslint-disable-line
+
+export const COLOR_SCALE = scaleThreshold<number, Color>()
+  .domain([-0.6, -0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.05, 1.2])
+  .range([
+    [65, 182, 196],
+    [127, 205, 187],
+    [199, 233, 180],
+    [237, 248, 177],
+    // zero
+    [255, 255, 204],
+    [255, 237, 160],
+    [254, 217, 118],
+    [254, 178, 76],
+    [253, 141, 60],
+    [252, 78, 42],
+    [227, 26, 28],
+    [189, 0, 38],
+    [128, 0, 38],
+  ])
+
+const INITIAL_VIEW_STATE = {
+  latitude: 49.254,
+  longitude: -123.13,
+  zoom: 11,
+  maxZoom: 16,
+  pitch: 45,
+  bearing: 0,
+}
+
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json'
+
+const ambientLight = new AmbientLight({
+  color: [255, 255, 255],
+  intensity: 1.0,
+})
+
+const dirLight = new SunLight({
+  timestamp: Date.UTC(2019, 7, 1, 22),
+  color: [255, 255, 255],
+  intensity: 1.0,
+  _shadow: true,
+})
+
+const landCover = [
+  [
+    [-123.0, 49.196],
+    [-123.0, 49.324],
+    [-123.306, 49.324],
+    [-123.306, 49.196],
+  ],
+]
+
+function getTooltip({ object }: PickingInfo) {
   return (
-    <div className={styles}>
-      {children}
-    </div>
+    object && {
+      html: `\
+  <div><b>Average Property Value</b></div>
+  <div>${object.properties.valuePerParcel} / parcel</div>
+  <div>${object.properties.valuePerSqm} / m<sup>2</sup></div>
+  <div><b>Growth</b></div>
+  <div>${Math.round(object.properties.growth * 100)}%</div>
+  `,
+    }
   )
 }
 
-function OuterRing() {
-  const styles = css({
-    boxShadow: `
-		0 -0.45em 0.375em hsla(0, 0%, 0%, 0.15),
-		0 0.5em 0.75em hsla(0, 0%, 0%, 0.15) inset,
-		0 0.25em 0.5em hsla(0, 0%, 100%, 0.4),
-		0 -0.5em 0.75em hsla(0, 0%, 100%, 0.4) inset`,
-    top: '0.75em',
-    left: '0.75em',
-    width: 'calc(100% - 1.5em)',
-    height: 'calc(100% - 1.5em)',
-    borderRadius: '50%',
-    position: 'absolute',
+export default function App({ data = DATA_URL, mapStyle = MAP_STYLE }) {
+  const [effects] = useState(() => {
+    const lightingEffect = new LightingEffect({ ambientLight, dirLight })
+    lightingEffect.shadowColor = [0, 0, 0, 0.5]
+    return [lightingEffect]
   })
+
+  const layers = [
+    // only needed when using shadows - a plane for shadows to drop on
+    new PolygonLayer({
+      id: 'ground',
+      data: landCover,
+      stroked: false,
+      getPolygon: f => f,
+      getFillColor: [0, 0, 0, 0],
+    }),
+    new GeoJsonLayer({
+      id: 'geojson',
+      data,
+      opacity: 0.8,
+      stroked: false,
+      filled: true,
+      extruded: true,
+      wireframe: true,
+      getElevation: f => Math.sqrt(f.properties!.valuePerSqm) * 10,
+      getFillColor: f => COLOR_SCALE(f.properties!.growth),
+      getLineColor: [255, 255, 255],
+      pickable: true,
+    }),
+  ]
+
   return (
-    <div className={styles}>
-    </div>
+    <DeckGL
+      layers={layers}
+      effects={effects}
+      initialViewState={INITIAL_VIEW_STATE}
+      controller={true}
+      getTooltip={getTooltip}>
+        {/* @ts-ignore */}
+      <Map reuseMaps mapLib={maplibreglWithSupported} mapStyle={mapStyle}
+        preventStyleDiffing={true} />
+    </DeckGL>
   )
 }
 
-function InnerRing() {
-  const styles = css({
-    boxShadow: `0 -0.25em 0.5em hsla(0, 0%, 100%, 0.4),
-		0 0.5em 0.75em hsla(0, 0%, 100%, 0.4) inset,
-		0 0.5em 0.375em hsla(0, 0%, 0%, 0.15),
-		0 -0.5em 0.75em hsla(0, 0%, 0%, 0.15) inset`,
-    top: '2.375em',
-    left: '2.375em',
-    width: 'calc(100% - 4.75em)',
-    height: 'calc(100% - 4.75em)',
-    borderRadius: '50%',
-    position: 'absolute',
-  })
-  return (
-    <div className={styles}>
-    </div>
-  )
-}
+// export function renderToDOM(container) {
+//   createRoot(container).render(<App />)
+// }
 
-function TrackCover() {
-  const styles = css({
-    animation: 'trackCover 3s linear infinite',
-    backgroundImage: 'conic-gradient(hsla(223, 90%, 95%, 1) 210deg, hsla(223, 90%, 95%, 0) 270deg)',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    borderRadius: '50%',
-    position: 'absolute',
-  })
-  return (
-    <div className={styles}>
-    </div>
-  )
-}
+// export default function App() {
+//   const styles = css({})
 
-function Ball({ children }: { children: ReactNode }) {
-  const styles = css({
-    top: 'calc(50% - 1.25em)',
-    left: 'calc(50% - 1.25em)',
-    transform: 'rotate(0) translateY(-6.5em)',
-    width: '2.5em',
-    height: '2.5em',
-    borderRadius: '50%',
-    position: 'absolute',
-    animation: 'ball 3s linear infinite',
-  })
-  return (
-    <div className={styles}>
-      {children}
-    </div>
-  )
-}
-
-function OuterShadow() {
-  const styles = css({
-    animation: 'ballOuterShadow 3s linear infinite',
-    backgroundImage: 'linear-gradient(hsla(0, 0%, 0%, 0.15),hsla(0, 0%, 0%, 0))',
-    borderRadius: '0 0 50% 50% / 0 0 100% 100%',
-    filter: 'blur(2px)',
-    top: '50%',
-    left: 0,
-    width: '100%',
-    height: '250%',
-    transform: 'rotate(20deg)',
-    transformOrigin: '50% 0',
-    zIndex: '-2',
-    position: 'absolute',
-  })
-  return (
-    <div className={styles}>
-    </div>
-  )
-}
-
-function InnerShadow() {
-  const styles = css({
-    animationName: 'ballInnerShadow',
-    boxShadow: ` 0 0.1em 0.2em hsla(0, 0%, 0%, 0.3),
-      0 0 0.2em hsla(0, 0%, 0%, 0.1) inset,
-      0 -1em 0.5em hsla(0, 0%, 0%, 0.15) inset`,
-    width: '100%',
-    height: '100%',
-    borderRadius: '50%',
-    position: 'absolute',
-  })
-  return (
-    <div className={styles}>
-    </div>
-  )
-}
-
-function SideShadows() {
-  const styles = css({
-    backgroundColor: 'hsla(0, 0%, 0%, 0.1)',
-    filter: 'blur(2px)',
-    width: '100%',
-    height: '100%',
-    transform: 'scale(0.75,1.1)',
-    zIndex: '-1',
-    borderRadius: '50%',
-    position: 'absolute',
-  })
-  return (
-    <div className={styles}>
-    </div>
-  )
-}
-
-function Texture() {
-  const styles = css({
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-    transform: 'translate3d(0,0,0)',
-    position: 'absolute',
-    borderRadius: '50%',
-    '&:before': {
-      animationName: 'ballTexture',
-      animationDuration: '0.25s',
-      background: 'url("https://assets.codepen.io/416221/snow.jpg") 0 0 / 50% 100%',
-      content: '""',
-      display: 'block',
-      filter: 'brightness(1.05)',
-      top: 0,
-      right: 0,
-      width: '200%',
-      height: '100%',
-      position: 'absolute',
-    },
-  })
-  return (
-    <div className={styles}>
-    </div>
-  )
-}
-
-export default function App() {
-  const styles = css({
-    backgroundColor: 'hsl(223, 90%, 95%)',
-    font: '1em / 1.5 sans-serif',
-    height: '100vh',
-    display: 'grid',
-    placeItems: 'center',
-  })
-
-  return (
-    <div className={styles}>
-      <Preloader>
-        <OuterRing />
-        <InnerRing />
-        <TrackCover />
-        <Ball>
-          <Texture />
-          <OuterShadow />
-          <InnerShadow />
-          <SideShadows />
-        </Ball>
-      </Preloader>
-    </div>
-  )
-}
+//   return (
+//     <div className={styles}>
+//     </div>
+//   )
+// }
