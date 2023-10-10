@@ -1,141 +1,128 @@
-import { ReactNode, Suspense, useTransition } from 'react'
-import { css, cx } from 'styled-system/css'
-import { Link, Redirect, Route, Router, Switch, useRoute } from 'wouter'
-import useLocation, { BaseLocationHook } from 'wouter/use-location'
+import { _SunLight as SunLight, AmbientLight, Color, LightingEffect,
+  PickingInfo } from '@deck.gl/core/typed'
+import { GeoJsonLayer, PolygonLayer } from '@deck.gl/layers/typed'
+import DeckGL from '@deck.gl/react/typed'
+import { scaleThreshold } from 'd3-scale'
+import maplibregl from 'maplibre-gl'
+import React, { useState } from 'react'
+import { createRoot } from 'react-dom/client'
+import { Map } from 'react-map-gl'
+import { css } from 'styled-system/css'
 
-import { createContext, useContext } from 'react'
+import { supported } from '@mapbox/mapbox-gl-supported'
 
-const DelayedCacheCtx = createContext({})
+const maplibreglWithSupported = { ...maplibregl, supported }
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+// Source data GeoJSON
+const DATA_URL =
+  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/geojson/vancouver-blocks.json' // eslint-disable-line
 
-const promisedResource = (promise: Promise<any> | null) => {
-  let result = promise
-  promise?.then(() => (result = null)).catch((error) => (result = error))
+export const COLOR_SCALE = scaleThreshold<number, Color>()
+  .domain([-0.6, -0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.05, 1.2])
+  .range([
+    [65, 182, 196],
+    [127, 205, 187],
+    [199, 233, 180],
+    [237, 248, 177],
+    // zero
+    [255, 255, 204],
+    [255, 237, 160],
+    [254, 217, 118],
+    [254, 178, 76],
+    [253, 141, 60],
+    [252, 78, 42],
+    [227, 26, 28],
+    [189, 0, 38],
+    [128, 0, 38],
+  ])
 
-  return {
-    read: () => {
-      if (result) throw result
-      return null
-    },
-  }
+const INITIAL_VIEW_STATE = {
+  latitude: 49.254,
+  longitude: -123.13,
+  zoom: 11,
+  maxZoom: 16,
+  pitch: 45,
+  bearing: 0,
 }
 
-function DelayedCont({ resource, children }: { resource: any; children: ReactNode }) {
-  resource.read()
-  return children
-}
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json'
 
-function Delayed({ ms, id, children }: { ms: number; id: string; children: ReactNode }) {
-  const ctx = useContext<any>(DelayedCacheCtx)
-  const resource = ctx[id] || (ctx[id] = promisedResource(wait(ms)))
+const ambientLight = new AmbientLight({
+  color: [255, 255, 255],
+  intensity: 1.0,
+})
 
-  return <DelayedCont resource={resource}>{children}</DelayedCont>
-}
+const dirLight = new SunLight({
+  timestamp: Date.UTC(2019, 7, 1, 22),
+  color: [255, 255, 255],
+  intensity: 1.0,
+  _shadow: true,
+})
 
-function ActiveLink({ href, children }: { href: string; children: ReactNode }) {
-  const [isActive] = useRoute(href)
+const landCover = [
+  [
+    [-123.0, 49.196],
+    [-123.0, 49.324],
+    [-123.306, 49.324],
+    [-123.306, 49.196],
+  ],
+]
 
-  const styles = css({
-    color: '#bbb',
-    textDecoration: 'none',
-    margin: '0 15px',
-    _hover: {
-      color: 'white',
-    },
-  })
-
-  const active = css({
-    color: 'white',
-    textDecoration: 'underline',
-  })
-
+function getTooltip({ object }: PickingInfo) {
   return (
-    <Link href={href}>
-      <a className={cx(styles, isActive && active)}>{children}</a>
-    </Link>
+    object && {
+      html: `\
+  <div><b>Average Property Value</b></div>
+  <div>${object.properties.valuePerParcel} / parcel</div>
+  <div>${object.properties.valuePerSqm} / m<sup>2</sup></div>
+  <div><b>Growth</b></div>
+  <div>${Math.round(object.properties.growth * 100)}%</div>
+  `,
+    }
   )
 }
 
-function IndexRoute() {
-  return <Delayed ms={1000} id={'test2'}>"This example uses hash-based routing."</Delayed>
-}
+export default function App({ data = DATA_URL, mapStyle = MAP_STYLE }) {
+  const [effects] = useState(() => {
+    const lightingEffect = new LightingEffect({ ambientLight, dirLight })
+    lightingEffect.shadowColor = [0, 0, 0, 0.5]
+    return [lightingEffect]
+  })
 
-function AboutRoute() {
-  return (
-    <article>
-      <h1>Wouter API</h1>
-      <p>test 1 2 3</p>
-      <Delayed ms={2000} id={'about'}>
-        Loaded!
-      </Delayed>
-    </article>
-  )
-}
-
-const useLocationWithTransition: BaseLocationHook = () => {
-  const [location, setLocation] = useLocation()
-  const [, startTransition] = useTransition()
-
-  return [location, (to: string) => startTransition(() => setLocation(to))]
-}
-
-export default function App() {
-  const styles = {
-    main: css({
-      padding: '30px 0',
+  const layers = [
+    // only needed when using shadows - a plane for shadows to drop on
+    new PolygonLayer({
+      id: 'ground',
+      data: landCover,
+      stroked: false,
+      getPolygon: f => f,
+      getFillColor: [0, 0, 0, 0],
     }),
-    nav: css({
-      borderBottom: '1px solid #999',
-      padding: '20px 0px',
-      _before: {
-        content: '"▲●"',
-        fontSize: 16,
-        marginRight: 20,
-      },
+    new GeoJsonLayer({
+      id: 'geojson',
+      data,
+      opacity: 0.8,
+      stroked: false,
+      filled: true,
+      extruded: true,
+      wireframe: true,
+      getElevation: f => Math.sqrt(f.properties!.valuePerSqm) * 10,
+      getFillColor: f => COLOR_SCALE(f.properties!.growth),
+      getLineColor: [255, 255, 255],
+      pickable: true,
     }),
-    body: css({
-      width: '100vw',
-      height: '100vh',
-      padding: '1rem 10rem',
-      background: 'black',
-      color: 'white',
-    }),
-  }
+  ]
 
   return (
-    <div className={styles.body}>
-      <Suspense fallback={'global app loading...'}>
-        <Router hook={useLocationWithTransition}>
-          <div className='App'>
-            <nav className={styles.nav}>
-              <ActiveLink href='/'>Home</ActiveLink>
-              <ActiveLink href='/about'>What is Wouter</ActiveLink>
-              <ActiveLink href='/test'>Test</ActiveLink>
-              <ActiveLink href='/faq'>FAQ</ActiveLink>
-              <ActiveLink href='/info'>More (redirect)</ActiveLink>
-            </nav>
-            <main className={styles.main}>
-              <Switch>
-                <Route path='/'>
-                  <IndexRoute />
-                </Route>
-                <Route path='/about'>
-                  <AboutRoute />
-                </Route>
-                <Route path='/info'>
-                  <Redirect to='/about' />
-                </Route>
-                <Route path='/:anything*'>
-                  <center>
-                    <b>404:</b> Sorry, this page isn't ready yet!
-                  </center>
-                </Route>
-              </Switch>
-            </main>
-          </div>
-        </Router>
-      </Suspense>
-    </div>
+    <DeckGL
+      layers={layers}
+      effects={effects}
+      initialViewState={INITIAL_VIEW_STATE}
+      controller={true}
+      getTooltip={getTooltip}>
+        {/* @ts-ignore */}
+      <Map reuseMaps mapLib={maplibreglWithSupported} mapStyle={mapStyle}
+        preventStyleDiffing={true} />
+    </DeckGL>
   )
 }
