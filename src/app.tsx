@@ -1,13 +1,10 @@
-import { _SunLight as SunLight, AmbientLight, Color, LightingEffect,
-  PickingInfo } from '@deck.gl/core/typed'
+import { _SunLight, AmbientLight, Color, LightingEffect, PickingInfo } from '@deck.gl/core/typed'
 import { GeoJsonLayer, PolygonLayer } from '@deck.gl/layers/typed'
 import DeckGL from '@deck.gl/react/typed'
 import { scaleThreshold } from 'd3-scale'
 import maplibregl from 'maplibre-gl'
-import React, { useState } from 'react'
-import { createRoot } from 'react-dom/client'
+import { useState } from 'react'
 import { Map } from 'react-map-gl'
-import { css } from 'styled-system/css'
 
 import { supported } from '@mapbox/mapbox-gl-supported'
 
@@ -15,7 +12,8 @@ const maplibreglWithSupported = { ...maplibregl, supported }
 
 // Source data GeoJSON
 const DATA_URL =
-  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/geojson/vancouver-blocks.json' // eslint-disable-line
+  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/geojson/vancouver-blocks.json'
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json'
 
 export const COLOR_SCALE = scaleThreshold<number, Color>()
   .domain([-0.6, -0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.05, 1.2])
@@ -45,14 +43,12 @@ const INITIAL_VIEW_STATE = {
   bearing: 0,
 }
 
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json'
-
 const ambientLight = new AmbientLight({
   color: [255, 255, 255],
   intensity: 1.0,
 })
 
-const dirLight = new SunLight({
+const dirLight = new _SunLight({
   timestamp: Date.UTC(2019, 7, 1, 22),
   color: [255, 255, 255],
   intensity: 1.0,
@@ -95,7 +91,7 @@ export default function App({ data = DATA_URL, mapStyle = MAP_STYLE }) {
       id: 'ground',
       data: landCover,
       stroked: false,
-      getPolygon: f => f,
+      getPolygon: (f) => f,
       getFillColor: [0, 0, 0, 0],
     }),
     new GeoJsonLayer({
@@ -106,8 +102,8 @@ export default function App({ data = DATA_URL, mapStyle = MAP_STYLE }) {
       filled: true,
       extruded: true,
       wireframe: true,
-      getElevation: f => Math.sqrt(f.properties!.valuePerSqm) * 10,
-      getFillColor: f => COLOR_SCALE(f.properties!.growth),
+      getElevation: (f) => Math.sqrt(f.properties!.valuePerSqm) * 10,
+      getFillColor: (f) => COLOR_SCALE(f.properties!.growth),
       getLineColor: [255, 255, 255],
       pickable: true,
     }),
@@ -120,9 +116,9 @@ export default function App({ data = DATA_URL, mapStyle = MAP_STYLE }) {
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
       getTooltip={getTooltip}>
-        {/* @ts-ignore */}
-      <Map reuseMaps mapLib={maplibreglWithSupported} mapStyle={mapStyle}
-        preventStyleDiffing={true} />
+      {/* @ts-ignore */}
+      <Map reuseMaps mapLib={maplibregl} mapStyle={mapStyle} preventStyleDiffing={true} />
+      {/* <Map reuseMaps mapLib={maplibreglWithSupported} mapStyle={MAP_STYLE} preventStyleDiffing={true} /> */}
     </DeckGL>
   )
 }
