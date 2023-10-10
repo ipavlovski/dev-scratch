@@ -6,7 +6,8 @@
     "quoteStyle": "alwaysSingle",
     "quoteProps": "asNeeded",
     "preferHanging": true,
-    "jsx.bracketPosition": "sameLine"
+    "jsx.bracketPosition": "sameLine",
+    "arrowFunction.useParentheses": "force"
   },
   "json": {
   },
