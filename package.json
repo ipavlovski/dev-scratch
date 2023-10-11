@@ -4,6 +4,7 @@
 		"prepare": "panda codegen"
 	},
 	"dependencies": {
+		"@deck.gl/aggregation-layers": "^8.9.30",
 		"@deck.gl/core": "^8.9.30",
 		"@deck.gl/layers": "^8.9.30",
 		"@deck.gl/react": "^8.9.30",
