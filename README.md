@@ -26,3 +26,10 @@ https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/contour
 
 https://deck.gl/examples/arc-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/arc
+
+## App4 - heatmap (uber pickup locations)
+
+https://deck.gl/examples/heatmap-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/heatmap
+
+
