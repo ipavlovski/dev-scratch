@@ -32,4 +32,7 @@ https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/arc
 https://deck.gl/examples/heatmap-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/heatmap
 
+## App5 - hexagon layers (uk road safety)
 
+https://deck.gl/examples/hexagon-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/3d-heatmap
