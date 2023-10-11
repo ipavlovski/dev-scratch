@@ -47,3 +47,9 @@ Mapbox project under ISC license.
 Note: issues providing proper typings on the custom layer subclass.
 
 
+## App7 - scatterplot layer (every person in new york city)
+
+https://deck.gl/examples/scatterplot-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/scatterplot
+
+
