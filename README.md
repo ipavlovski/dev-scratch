@@ -67,3 +67,11 @@ Using a custom json loader.
 Note: failing to display data properly.
 Was working, but then ran out of API credits (prior to manual file loading).
 
+## App10 - terrain layer
+
+https://deck.gl/examples/terrain-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/terrain
+
+NOTE: include the mapbox access token in the .env file
+VITE_MAPBOX_ACESS_TOKEN=""
+
