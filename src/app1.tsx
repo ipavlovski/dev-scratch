@@ -101,7 +101,6 @@ function renderTooltip({ fatalities, incidents, year, hoverInfo }: renderTooltip
   )
 }
 
-// type Properties = { mag: number };
 type Feature = GeoJSON.Feature<GeoJSON.Point, Accident & { length: number }>
 
 function Main(props: { roads: string; year: string; accidents: Accident[]; mapStyle: string }) {

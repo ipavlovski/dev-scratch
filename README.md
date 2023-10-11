@@ -36,3 +36,14 @@ https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/heatmap
 
 https://deck.gl/examples/hexagon-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/3d-heatmap
+
+## App6 - icon layer (meteorites landings)
+
+https://deck.gl/examples/icon-layer
+
+Uses supercluster: https://github.com/mapbox/supercluster
+Mapbox project under ISC license.
+
+Note: issues providing proper typings on the custom layer subclass.
+
+
