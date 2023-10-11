@@ -21,3 +21,8 @@ https://developers.google.com/maps/documentation/javascript/examples/deckgl-poin
 
 https://deck.gl/examples/contour-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/contour
+
+## App3 - arcs (county-to-county migrations)
+
+https://deck.gl/examples/arc-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/arc
