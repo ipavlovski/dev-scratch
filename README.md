@@ -53,3 +53,7 @@ https://deck.gl/examples/scatterplot-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/scatterplot
 
 
+## App8 - screen grid layer (uber pickup locations)
+
+https://deck.gl/examples/screen-grid-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/screen-grid
