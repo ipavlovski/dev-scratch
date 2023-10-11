@@ -57,3 +57,13 @@ https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/scatterplot
 
 https://deck.gl/examples/screen-grid-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/screen-grid
+
+## App9 - scene graph (opensky network flights)
+
+https://deck.gl/examples/scenegraph-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/scenegraph
+
+Using a custom json loader.
+Note: failing to display data properly.
+Was working, but then ran out of API credits (prior to manual file loading).
+
