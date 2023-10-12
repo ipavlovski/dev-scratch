@@ -80,4 +80,10 @@ VITE_MAPBOX_ACESS_TOKEN=""
 https://deck.gl/examples/text-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/text
 
-NNeed to properly type the collision extension.
+Need to properly type the collision extension.
+
+## App12 - tile layer
+
+https://deck.gl/examples/tile-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/map-tile
+
