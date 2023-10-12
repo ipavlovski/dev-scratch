@@ -75,3 +75,9 @@ https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/terrain
 NOTE: include the mapbox access token in the .env file
 VITE_MAPBOX_ACESS_TOKEN=""
 
+## App11 - text layer
+
+https://deck.gl/examples/text-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/text
+
+NNeed to properly type the collision extension.
