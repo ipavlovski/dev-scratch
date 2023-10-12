@@ -95,3 +95,8 @@ https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/3d-tiles
 NOTE: need Cesium token, https://ion.cesium.com/
 VITE_ION_ASSET_ID=""
 VITE_ION_TOKEN=""
+
+## App14 - trips layer
+
+https://deck.gl/examples/trips-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/trips
