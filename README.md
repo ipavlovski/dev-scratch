@@ -87,3 +87,11 @@ Need to properly type the collision extension.
 https://deck.gl/examples/tile-layer
 https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/map-tile
 
+## App13 - 3d tile layer
+
+https://deck.gl/examples/tile-3d-layer
+https://github.com/visgl/deck.gl/tree/8.9-release/examples/website/3d-tiles
+
+NOTE: need Cesium token, https://ion.cesium.com/
+VITE_ION_ASSET_ID=""
+VITE_ION_TOKEN=""
